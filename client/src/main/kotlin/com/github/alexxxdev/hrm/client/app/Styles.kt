@@ -18,7 +18,7 @@ class Styles : Stylesheet() {
             backgroundColor += Tile.BACKGROUND
         }
         s(clock) {
-            //backgroundColor += Tile.BLUE
+            // backgroundColor += Tile.BLUE
         }
         label and heading {
             padding = box(10.px)

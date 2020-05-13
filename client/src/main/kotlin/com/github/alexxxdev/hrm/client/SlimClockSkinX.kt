@@ -4,7 +4,14 @@ import eu.hansolo.medusa.Fonts
 import eu.hansolo.medusa.skins.ClockSkinBase
 import eu.hansolo.medusa.tools.Helper
 import javafx.geometry.Insets
-import javafx.scene.layout.*
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.Border
+import javafx.scene.layout.BorderStroke
+import javafx.scene.layout.BorderStrokeStyle
+import javafx.scene.layout.BorderWidths
+import javafx.scene.layout.CornerRadii
+import javafx.scene.layout.Pane
 import javafx.scene.shape.Arc
 import javafx.scene.shape.Circle
 import javafx.scene.shape.StrokeLineCap
@@ -35,9 +42,10 @@ class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
 
     override fun initGraphics() {
 
-        if (clock.prefWidth.compareTo(0.0) <= 0 || clock.prefHeight.compareTo(0.0) <= 0 || clock.width.compareTo(0.0) <= 0 || clock.height.compareTo(
-                0.0
-            ) <= 0
+        if (clock.prefWidth.compareTo(0.0) <= 0 ||
+            clock.prefHeight.compareTo(0.0) <= 0 ||
+            clock.width.compareTo(0.0) <= 0 ||
+            clock.height.compareTo(0.0) <= 0
         ) {
             if (clock.prefWidth > 0 && clock.prefHeight > 0) {
                 clock.setPrefSize(clock.prefWidth, clock.prefHeight)
@@ -107,7 +115,6 @@ class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
     }
 
     override fun updateAlarms() {
-
     }
 
     override fun resize() {

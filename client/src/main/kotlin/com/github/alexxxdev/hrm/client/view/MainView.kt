@@ -7,15 +7,20 @@ import com.github.alexxxdev.hrm.client.app.TITLE
 import com.github.alexxxdev.hrm.client.app.WIDTH
 import javafx.geometry.Pos
 import javafx.scene.paint.Color
-import tornadofx.*
-import java.util.*
+import tornadofx.View
+import tornadofx.addClass
+import tornadofx.attachTo
+import tornadofx.hbox
+import tornadofx.label
+import tornadofx.pane
+import java.util.Locale
 
 class MainView : View(TITLE) {
     private var tileSize = HEIGHT / 3
 
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
-        //alignment = Pos.CENTER
+        // alignment = Pos.CENTER
         hbox {
             addClass(Styles.clock)
             alignment = Pos.CENTER

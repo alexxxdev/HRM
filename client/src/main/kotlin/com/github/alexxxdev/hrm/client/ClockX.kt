@@ -4,7 +4,6 @@ import eu.hansolo.medusa.Clock
 import javafx.scene.control.Skin
 
 class ClockX : Clock() {
-
     override fun createDefaultSkin(): Skin<*> {
         return SlimClockSkinX(ClockX@ this)
     }

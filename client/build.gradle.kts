@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.72"
+    kotlin("jvm")
     application
     id("org.openjfx.javafxplugin")
     id("no.tornado.fxlauncher")
@@ -39,7 +39,7 @@ tasks {
 javafx {
     version = "14.0.1"
     modules = listOf("javafx.controls", "javafx.graphics")
-    //configuration = "compileOnly"
+    // configuration = "compileOnly"
 }
 
 application {

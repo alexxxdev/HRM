@@ -5,7 +5,12 @@ import javafx.application.Platform
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import tornadofx.App
-import java.awt.*
+import java.awt.AWTException
+import java.awt.MenuItem
+import java.awt.PopupMenu
+import java.awt.SystemTray
+import java.awt.Toolkit
+import java.awt.TrayIcon
 import java.awt.event.ActionListener
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
@@ -21,10 +26,10 @@ class MyApp : App(MainView::class, Styles::class) {
     override fun start(stage: Stage) {
         Platform.setImplicitExit(false)
         with(stage) {
-            //initStyle(StageStyle.TRANSPARENT);
+            // initStyle(StageStyle.TRANSPARENT);
             isResizable = false
-            //isFullScreen = true
-            //fullScreenExitHint="ds"
+            // isFullScreen = true
+            // fullScreenExitHint="ds"
             minWidth = WIDTH
             minHeight = HEIGHT
             icons.add(Image("/$ICON"))

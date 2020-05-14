@@ -7,6 +7,8 @@ buildscript {
         maven(url = "https://plugins.gradle.org/m2/")
     }
     dependencies {
+        classpath(kotlin("gradle-plugin", version = "1.3.72"))
+        classpath(kotlin("serialization", version = "1.3.72"))
         classpath("org.openjfx:javafx-plugin:0.0.8")
         classpath("com.github.ben-manes:gradle-versions-plugin:0.28.0")
         classpath("no.tornado:fxlauncher-gradle-plugin:1.0.21.1")

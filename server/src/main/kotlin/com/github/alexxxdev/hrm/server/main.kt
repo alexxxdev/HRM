@@ -12,14 +12,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import java.net.InetSocketAddress
 
 var hrmModel = HRMModel()
 val hrm = HRM()
+val json = Json(JsonConfiguration.Stable)
 
 fun main(args: Array<String>) {
     if (getData()) return
-    println(hrmModel)
+
+    println(json.stringify(HRMModel.serializer(), hrmModel))
 
     CoroutineScope(Dispatchers.Default).launch {
         repeat(1) {
@@ -47,7 +51,7 @@ fun main(args: Array<String>) {
                         val line = input.readUTF8Line()
                         println("${socket.remoteAddress}: $line")
                         if (line != null) {
-                            output.write("$hrmModel\r\n")
+                            output.write("${json.stringify(HRMModel.serializer(), hrmModel)}.\r\n")
                         } else {
                             socket.close()
                             return@launch

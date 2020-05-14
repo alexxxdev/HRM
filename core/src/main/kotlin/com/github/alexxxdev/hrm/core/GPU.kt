@@ -7,5 +7,6 @@ data class GPU(
     val name: String = "",
     val load: Float = 0f,
     val temperature: Float = 0f,
-    val fan: Int = 0
+    val fan: Float = 0f,
+    val usedMemory: Float = 0f
 )

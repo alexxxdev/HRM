@@ -17,3 +17,9 @@ tasks {
         kotlinOptions.jvmTarget = "1.8"
     }
 }
+
+val jar by tasks.getting(Jar::class) {
+    manifest {
+        attributes["Manifest-Version"] = version
+    }
+}

@@ -7,6 +7,7 @@ import com.github.alexxxdev.hrm.core.IHRM
 import com.github.alexxxdev.hrm.core.IO
 import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
+import kotlin.math.roundToInt
 
 class HRM : IHRM {
     val io = IO()
@@ -39,18 +40,70 @@ class HRM : IHRM {
             .trim()
     }
 
-    override fun getData(): List<Result<HRMModel>> {
+    override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
         val list = getValuesFromWMI()
         return if (list.isNullOrEmpty()) {
             listOf(Result.failure(java.lang.Exception()))
         } else {
-            var fan = 0
+            var CPUload: Float = 0f
+            var CPUtemperature: Float = 0f
+            var CPUfan: Float = 0f
+            var GPUload: Float = 0f
+            var GPUtemperature: Float = 0f
+            var GPUfan: Float = 0f
+            var GPUUsedMemory: Float = 0f
+            var MemoryUsed: Float = 0f
+            var MemoryTotal: Float = 0f
             list.forEach {
-                if (it[0] == "GPU Fan") {
-                    fan = it[2].toInt()
+                if (it[0] == params.get("cpu.load") && it[1] == "Load") {
+                    CPUload = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("cpu.temperature") && it[1] == "Temperature") {
+                    CPUtemperature = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("cpu.fan") && it[1] == "Fan") {
+                    CPUfan = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("gpu.load") && it[1] == "Load") {
+                    GPUload = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("gpu.temperature") && it[1] == "Temperature") {
+                    GPUtemperature = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("gpu.fan") && it[1] == "Control") {
+                    GPUfan = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("memory.used") && it[1] == "Data") {
+                    MemoryUsed = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("memory.total") && it[1] == "Load") {
+                    MemoryTotal = it[2].replace(',', '.').toFloat()
+                }
+                if (it[0] == params.get("gpu.memory") && it[1] == "Load") {
+                    GPUUsedMemory = it[2].replace(',', '.').toFloat()
                 }
             }
-            listOf(Result.success(hrmModel.copy(cpu = CPU(fan = fan))))
+            listOf(
+                Result.success(
+                    hrmModel.copy(
+                        cpu = hrmModel.cpu.copy(
+                            load = CPUload,
+                            temperature = CPUtemperature,
+                            fan = CPUfan
+                        ),
+                        gpu = hrmModel.gpu.copy(
+                            load = GPUload,
+                            temperature = GPUtemperature,
+                            fan = GPUfan,
+                            usedMemory = GPUUsedMemory
+                        ),
+                        memory = hrmModel.memory.copy(
+                            used = MemoryUsed,
+                            total = ((MemoryUsed * 100) / MemoryTotal).roundToInt().toFloat()
+                        )
+                    )
+                )
+            )
         }
     }
 

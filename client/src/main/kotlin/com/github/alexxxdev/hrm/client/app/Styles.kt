@@ -18,12 +18,12 @@ class Styles : Stylesheet() {
             backgroundColor += Tile.BACKGROUND
         }
         s(clock) {
-            // backgroundColor += Tile.BLUE
+            //backgroundColor += Tile.BLUE
         }
         label and heading {
-            padding = box(10.px)
-            fontSize = 20.px
+            fontSize = 12.px
             fontWeight = FontWeight.BOLD
+            textFill = Tile.BLUE
         }
     }
 }

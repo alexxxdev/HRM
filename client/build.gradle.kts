@@ -22,6 +22,7 @@ dependencies {
     implementation("org.kordamp.ikonli:ikonli-materialdesign-pack:11.4.0")
     implementation("org.kordamp.ikonli:ikonli-weathericons-pack:11.4.0")
     implementation("org.kordamp.ikonli:ikonli-fontawesome-pack:11.4.0")
+    implementation("io.ktor:ktor-network:1.3.1")
     /*implementation("com.dorkbox:SystemTray:3.17")
     implementation("net.java.dev.jna:jna:5.5.0")
     implementation("net.java.dev.jna:jna-platform:5.5.0")*/

@@ -1,10 +1,24 @@
 package com.github.alexxxdev.hrm.client.app
 
+import com.github.alexxxdev.hrm.client.ClientController
 import com.github.alexxxdev.hrm.client.view.MainView
+import com.github.alexxxdev.hrm.core.HRMModel
+import com.github.alexxxdev.hrm.core.getVersion
+import io.ktor.network.selector.ActorSelectorManager
+import io.ktor.network.sockets.aSocket
+import io.ktor.network.sockets.openReadChannel
+import io.ktor.network.sockets.openWriteChannel
+import io.ktor.util.cio.write
+import io.ktor.utils.io.readUTF8Line
 import javafx.application.Platform
 import javafx.scene.image.Image
 import javafx.stage.Stage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import tornadofx.App
+import tornadofx.UIComponent
 import java.awt.AWTException
 import java.awt.MenuItem
 import java.awt.PopupMenu
@@ -14,6 +28,7 @@ import java.awt.TrayIcon
 import java.awt.event.ActionListener
 import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
+import java.net.InetSocketAddress
 
 const val TITLE = "Title App Name"
 const val ICON = "icon.png"
@@ -21,9 +36,11 @@ const val WIDTH = 800.0
 const val HEIGHT = 480.0
 
 class MyApp : App(MainView::class, Styles::class) {
+    val controller:ClientController by inject()
     var trayIcon: TrayIcon? = null
 
     override fun start(stage: Stage) {
+        controller.init()
         Platform.setImplicitExit(false)
         with(stage) {
             // initStyle(StageStyle.TRANSPARENT);
@@ -64,12 +81,12 @@ class MyApp : App(MainView::class, Styles::class) {
                 )
             }
             trayIcon?.isImageAutoSize = true
-            trayIcon?.addActionListener(actionListener)
+            /*trayIcon?.addActionListener(actionListener)
             trayIcon?.addMouseListener(object : MouseAdapter() {
                 override fun mouseReleased(e: MouseEvent) {
                     Platform.runLater { stage.show() }
                 }
-            })
+            })*/
             try {
                 tray.add(trayIcon)
             } catch (e: AWTException) {
@@ -104,4 +121,5 @@ class MyApp : App(MainView::class, Styles::class) {
             }*/
         }
     }
+
 }

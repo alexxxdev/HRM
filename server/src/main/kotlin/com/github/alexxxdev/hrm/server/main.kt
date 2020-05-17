@@ -63,6 +63,11 @@ fun main(args: Array<String>) {
                                 line.startsWith("version:") -> {
                                     val clientVersion = line.split(":").last()
                                     versionCompatibility = clientVersion == version
+                                    if(versionCompatibility) {
+                                        output.write("The client compatible\r\n")
+                                    } else {
+                                        output.write("The client is not compatible\r\n")
+                                    }
                                 }
                                 line == "get" -> {
                                     if (versionCompatibility) {

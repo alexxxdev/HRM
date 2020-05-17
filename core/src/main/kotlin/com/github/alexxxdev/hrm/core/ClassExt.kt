@@ -5,7 +5,7 @@ import java.net.URL
 import java.util.jar.Attributes
 import java.util.jar.Manifest
 
-fun HRMModel.getVersion(): String {
+fun Any.getVersion(): String {
     val className: String = this::class.java.simpleName + ".class"
     val classPath: String = this::class.java.getResource(className).toString()
     val url = URL(classPath)

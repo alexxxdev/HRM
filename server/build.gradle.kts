@@ -13,7 +13,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":windows"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation("io.ktor:ktor-network:1.3.1")
+    implementation("io.ktor:ktor-network:1.3.2")
 }
 
 tasks {

@@ -1,4 +1,5 @@
 import io.gitlab.arturbosch.detekt.Detekt
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 buildscript {
     repositories {
@@ -16,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.9.0")
+    id("io.gitlab.arturbosch.detekt").version("1.9.1")
 }
 
 allprojects {
@@ -27,10 +28,16 @@ allprojects {
         jcenter()
         maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
     }
+
+    tasks.withType<DependencyUpdatesTask> {
+        rejectVersionIf {
+            isNonStable(candidate.version)
+        }
+    }
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.9.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.9.1")
 }
 
 val detektFormat by tasks.registering(Detekt::class) {
@@ -60,4 +67,11 @@ tasks {
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
+}
+
+fun isNonStable(version: String): Boolean {
+    val stableKeyword = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea").any { version.toUpperCase().contains(it) }
+    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
+    val isStable = stableKeyword || regex.matches(version)
+    return isStable.not()
 }

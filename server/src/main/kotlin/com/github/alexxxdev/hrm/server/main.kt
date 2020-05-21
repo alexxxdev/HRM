@@ -64,16 +64,16 @@ fun main(args: Array<String>) {
                                     val clientVersion = line.split(":").last()
                                     versionCompatibility = clientVersion == version
                                     if(versionCompatibility) {
-                                        output.write("The client compatible\r\n")
+                                        output.write("success\r\n")
                                     } else {
-                                        output.write("The client is not compatible\r\n")
+                                        output.write("fail\r\n")
                                     }
                                 }
                                 line == "get" -> {
                                     if (versionCompatibility) {
                                         output.write("${json.stringify(HRMModel.serializer(), hrmModel)}\r\n")
                                     } else {
-                                        output.write("The client is not compatible\r\n")
+                                        output.write("fail\r\n")
                                         socket.close()
                                         return@launch
                                     }

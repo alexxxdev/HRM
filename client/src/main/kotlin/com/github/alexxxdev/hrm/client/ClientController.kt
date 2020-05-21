@@ -15,12 +15,15 @@ import javafx.application.Platform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonConfiguration
 import tornadofx.Controller
 import java.net.ConnectException
 import java.net.InetSocketAddress
 
 class ClientController : Controller() {
     val view: MainView by inject()
+    val json = Json(JsonConfiguration.Stable)
 
     fun init() {
         view.visibilityConnectPane(true)
@@ -50,10 +53,18 @@ class ClientController : Controller() {
                     output.write("version:${HRMModel().getVersion()}\r\n")
                     val response = input.readUTF8Line()
                     println("Server said: '$response'")
-
-                    output.write("get\r\n")
-                    val response2 = input.readUTF8Line()
-                    println("Server said: '$response2'")
+                    if(response == "success"){
+                        while (true){
+                            output.write("get\r\n")
+                            val response2 = input.readUTF8Line()
+                            println("Server said: '$response2'")
+                            if(response2 == "fail") {
+                                socket.close()
+                                return@launch
+                            }
+                            val hrmModel = json.parse(HRMModel.serializer(), response2)
+                        }
+                    }
                 }
             }
         }

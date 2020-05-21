@@ -23,9 +23,10 @@ val json = Json(JsonConfiguration.Stable)
 val config = Config("config")
 
 fun main(args: Array<String>) {
+    println(System.getProperty("os.name"))
     if (!config.readConfig()) return
 
-    if (getData(config.params)) return
+    if (!getData(config.params)) return
 
     val version = hrmModel.getVersion()
     println(version)
@@ -34,7 +35,7 @@ fun main(args: Array<String>) {
 
     CoroutineScope(Dispatchers.Default).launch {
         repeat(30) {
-            if (getData(config.params)) return@launch
+            if (!getData(config.params)) return@launch
             println(json.stringify(HRMModel.serializer(), hrmModel))
             delay(config.refreshDataInterval)
         }
@@ -95,11 +96,7 @@ fun main(args: Array<String>) {
 
 private fun getData(params: Map<String, String>): Boolean {
     val data = hrm.getData(params).first()
-    if (data.isFailure) {
-        println("Open Hardware Monitor not Running!")
-        println("Please run Open Hardware Monitor with Admin Rights")
-        return true
-    }
+    if (data.isFailure) return false
     hrmModel = data.getOrThrow()
-    return false
+    return true
 }

@@ -43,6 +43,8 @@ class HRM : IHRM {
     override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
         val list = getValuesFromWMI()
         return if (list.isNullOrEmpty()) {
+            println("Open Hardware Monitor not Running!")
+            println("Please run Open Hardware Monitor with Admin Rights")
             listOf(Result.failure(java.lang.Exception()))
         } else {
             var CPUload: Float = 0f

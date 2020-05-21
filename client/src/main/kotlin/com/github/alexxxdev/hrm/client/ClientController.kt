@@ -35,7 +35,7 @@ class ClientController : Controller() {
             println(text)
             view.visibilityConnectPane(false)
 
-            CoroutineScope(Dispatchers.Default).launch {
+            val job = CoroutineScope(Dispatchers.Default).launch {
                 var socket: Socket?=null
                 try {
                     socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
@@ -58,7 +58,7 @@ class ClientController : Controller() {
                             output.write("get\r\n")
                             val response2 = input.readUTF8Line()
                             println("Server said: '$response2'")
-                            if(response2 == "fail") {
+                            if(response2 == "fail" || response2 == null) {
                                 socket.close()
                                 return@launch
                             }
@@ -67,6 +67,7 @@ class ClientController : Controller() {
                     }
                 }
             }
+            //job.cancel()
         }
     }
 }

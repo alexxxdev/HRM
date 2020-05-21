@@ -9,9 +9,15 @@ version = "1.0-SNAPSHOT"
 val mainClazz = "$group.MainKt"
 val applicationName = "HRM Server"
 
+val os = System.getProperty("os.name")
+
 dependencies {
     implementation(project(":core"))
-    implementation(project(":windows"))
+    if(os == "Linux") {
+        implementation(project(":linux"))
+    } else {
+        implementation(project(":windows"))
+    }
     implementation(kotlin("stdlib-jdk8"))
     implementation("io.ktor:ktor-network:1.3.2")
 }

@@ -4,7 +4,11 @@ import java.io.InputStreamReader
 
 class IO {
     @Throws(java.lang.Exception::class)
-    fun getShellOutput(cmd: String?): String {
+    fun getShellOutput(cmd: String): String {
+        return getShellOutput(arrayOf(cmd))
+    }
+
+    fun getShellOutput(cmd: Array<String>): String {
         val p = Runtime.getRuntime().exec(cmd)
         val isr = InputStreamReader(p.inputStream)
         val sb = StringBuilder()

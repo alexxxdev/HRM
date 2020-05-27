@@ -23,7 +23,6 @@ val json = Json(JsonConfiguration.Stable)
 val config = Config("config")
 
 fun main(args: Array<String>) {
-    println(System.getProperty("os.name"))
     if (!config.readConfig()) return
 
     if (!getData(config.params)) return
@@ -34,7 +33,7 @@ fun main(args: Array<String>) {
     println(json.stringify(HRMModel.serializer(), hrmModel))
 
     CoroutineScope(Dispatchers.Default).launch {
-        repeat(30) {
+        repeat(1) {
             if (!getData(config.params)) return@launch
             println(json.stringify(HRMModel.serializer(), hrmModel))
             delay(config.refreshDataInterval)

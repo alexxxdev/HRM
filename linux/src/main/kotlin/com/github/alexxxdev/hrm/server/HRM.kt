@@ -7,16 +7,17 @@ import com.github.alexxxdev.hrm.core.IHRM
 import com.github.alexxxdev.hrm.core.IO
 import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
-import kotlin.math.roundToInt
 
 class HRM : IHRM {
     val io = IO()
     var hrmModel = HRMModel()
 
     init {
-        hrmModel = hrmModel.copy(os = OS(name = System.getProperty("os.name"), type = OSType.Linux))
+        hrmModel = hrmModel.copy(os = OS(name = System.getProperty("os.name")+"("+System.getProperty("os.version")+")", type = OSType.Linux))
         val cpuModel = getCPUModel()
+        println(cpuModel)
         val gpuModel = getGPUModel()
+        println(gpuModel)
         hrmModel = hrmModel.copy(cpu = CPU(name = cpuModel), gpu = GPU(name = gpuModel))
     }
 
@@ -25,14 +26,30 @@ class HRM : IHRM {
     }
 
     override fun getCPUModel(): String {
-        return ""
+        return io.getShellOutput(
+            arrayOf("/bin/sh", "-c", "cat /proc/cpuinfo | grep 'model name' | uniq")
+        )
+            .replace("\r", "")
+            .replace("\n", "")
+            .replaceFirst("model name", "")
+            .replaceFirst(":", "")
+            .trim()
     }
 
     override fun getGPUModel(): String {
-        return ""
+        return io.getShellOutput(
+            arrayOf("/bin/sh", "-c", "lshw -C display | grep product | uniq")
+        )
+            .split("\n")
+            .get(0)
+            .replaceBefore(":", "")
+            .replace(":", "")
+            .trim()
     }
 
     override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
-        return listOf(Result.failure(Exception()))
+        return listOf(Result.success(
+            hrmModel
+        ))
     }
 }

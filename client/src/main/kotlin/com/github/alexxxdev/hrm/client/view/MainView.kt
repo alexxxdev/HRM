@@ -6,12 +6,15 @@ import com.github.alexxxdev.hrm.client.app.HEIGHT
 import com.github.alexxxdev.hrm.client.app.Styles
 import com.github.alexxxdev.hrm.client.app.TITLE
 import com.github.alexxxdev.hrm.client.app.WIDTH
+import eu.hansolo.medusa.Clock
+import eu.hansolo.medusa.Fonts
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.scene.text.TextAlignment
 import tornadofx.Stylesheet
 import tornadofx.View
 import tornadofx.action
@@ -70,8 +73,22 @@ class MainView : View(TITLE) {
             }
         }
 
-        val clock = ClockX()
-        clock.attachTo(this) {
+        val CPUName = label("CPU: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz") {
+            textFill = Clock.BRIGHT_COLOR
+            font = Fonts.robotoRegular(15.0)
+            paddingAll = 10.0
+            prefWidth = WIDTH / 2
+        }
+
+        val GPUName = label("GPU: Lexa PRO [Radeon 540/540X/550/550X / RX 540X/550/550X]") {
+            textFill = Clock.BRIGHT_COLOR
+            font = Fonts.robotoRegular(15.0)
+            paddingAll = 10.0
+            prefWidth = WIDTH / 2
+            layoutX = WIDTH - WIDTH / 2
+        }
+
+        val clock = ClockX().attachTo(this) {
             addClass(Styles.clock)
             setPrefSize(tileSize * 2, tileSize * 2)
             layoutX = WIDTH / 2 - prefWidth / 2

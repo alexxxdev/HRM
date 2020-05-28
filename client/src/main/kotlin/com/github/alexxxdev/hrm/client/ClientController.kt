@@ -5,7 +5,6 @@ import com.github.alexxxdev.hrm.core.HRMModel
 import com.github.alexxxdev.hrm.core.getVersion
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.SocketBuilder
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
@@ -14,6 +13,7 @@ import io.ktor.utils.io.readUTF8Line
 import javafx.application.Platform
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
@@ -36,7 +36,7 @@ class ClientController : Controller() {
             view.visibilityConnectPane(false)
 
             val job = CoroutineScope(Dispatchers.Default).launch {
-                var socket: Socket?=null
+                var socket: Socket? = null
                 try {
                     socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
                 } catch (e: ConnectException) {
@@ -53,21 +53,25 @@ class ClientController : Controller() {
                     output.write("version:${HRMModel().getVersion()}\r\n")
                     val response = input.readUTF8Line()
                     println("Server said: '$response'")
-                    if(response == "success"){
-                        while (true){
+                    if (response == "success") {
+                        while (true) {
                             output.write("get\r\n")
                             val response2 = input.readUTF8Line()
                             println("Server said: '$response2'")
-                            if(response2 == "fail" || response2 == null) {
+                            if (response2 == "fail" || response2 == null) {
                                 socket.close()
                                 return@launch
                             }
                             val hrmModel = json.parse(HRMModel.serializer(), response2)
+                            Platform.runLater {
+                                view.showModel(hrmModel)
+                            }
+                            delay(1000)
                         }
                     }
                 }
             }
-            //job.cancel()
+            // job.cancel()
         }
     }
 }

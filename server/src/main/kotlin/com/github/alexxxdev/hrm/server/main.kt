@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
                                 line.startsWith("version:") -> {
                                     val clientVersion = line.split(":").last()
                                     versionCompatibility = clientVersion == version
-                                    if(versionCompatibility) {
+                                    if (versionCompatibility) {
                                         output.write("success\r\n")
                                     } else {
                                         output.write("fail\r\n")

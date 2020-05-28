@@ -13,7 +13,12 @@ class HRM : IHRM {
     var hrmModel = HRMModel()
 
     init {
-        hrmModel = hrmModel.copy(os = OS(name = System.getProperty("os.name")+"("+System.getProperty("os.version")+")", type = OSType.Linux))
+        hrmModel = hrmModel.copy(
+            os = OS(
+                name = System.getProperty("os.name") + "(" + System.getProperty("os.version") + ")",
+                type = OSType.Linux
+            )
+        )
         val cpuModel = getCPUModel()
         println(cpuModel)
         val gpuModel = getGPUModel()

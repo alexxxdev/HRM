@@ -13,9 +13,9 @@ val os = System.getProperty("os.name")
 
 dependencies {
     implementation(project(":core"))
-    if(os.startsWith("Linux")) {
+    if (os.startsWith("Linux")) {
         implementation(project(":linux"))
-    } else if(os.startsWith("Windows")){
+    } else if (os.startsWith("Windows")) {
         implementation(project(":windows"))
     }
     implementation(kotlin("stdlib-jdk8"))

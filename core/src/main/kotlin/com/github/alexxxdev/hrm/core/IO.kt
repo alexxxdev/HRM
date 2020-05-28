@@ -5,11 +5,16 @@ import java.io.InputStreamReader
 class IO {
     @Throws(java.lang.Exception::class)
     fun getShellOutput(cmd: String): String {
-        return getShellOutput(arrayOf(cmd))
+        val p = Runtime.getRuntime().exec(cmd)
+        return read(p)
     }
 
     fun getShellOutput(cmd: Array<String>): String {
         val p = Runtime.getRuntime().exec(cmd)
+        return read(p)
+    }
+
+    private fun read(p: Process): String {
         val isr = InputStreamReader(p.inputStream)
         val sb = StringBuilder()
         while (true) {

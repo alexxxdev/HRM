@@ -6,24 +6,16 @@ import com.github.alexxxdev.hrm.client.app.HEIGHT
 import com.github.alexxxdev.hrm.client.app.Styles
 import com.github.alexxxdev.hrm.client.app.TITLE
 import com.github.alexxxdev.hrm.client.app.WIDTH
-import eu.hansolo.medusa.Clock
-import eu.hansolo.medusa.Fonts
-import javafx.beans.property.SimpleStringProperty
-import javafx.geometry.Insets
+import com.github.alexxxdev.hrm.core.HRMModel
 import javafx.geometry.Pos
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import javafx.scene.text.TextAlignment
-import tornadofx.Stylesheet
 import tornadofx.View
 import tornadofx.action
 import tornadofx.addClass
 import tornadofx.attachTo
-import tornadofx.bindStringProperty
 import tornadofx.button
-import tornadofx.buttonbar
-import tornadofx.hbox
 import tornadofx.label
 import tornadofx.paddingAll
 import tornadofx.pane
@@ -33,12 +25,14 @@ import java.util.Locale
 
 class MainView : View(TITLE) {
     private var tileSize = HEIGHT / 3
-    private lateinit var connectPane:Pane
-    private lateinit var connectMessage:Label
+    private lateinit var connectPane: Pane
+    private lateinit var connectMessage: Label
 
     val controller: ClientController by inject()
+    lateinit var CPUName: Label
+    lateinit var GPUName: Label
 
-    fun visibilityConnectPane(value:Boolean) {
+    fun visibilityConnectPane(value: Boolean) {
         connectPane.isVisible = value
         connectMessage.isVisible = false
     }
@@ -46,6 +40,11 @@ class MainView : View(TITLE) {
     fun showMessage(localizedMessage: String?) {
         connectMessage.text = localizedMessage
         connectMessage.isVisible = true
+    }
+
+    fun showModel(hrmModel: HRMModel) {
+        CPUName.text = hrmModel.cpu.name
+        GPUName.text = hrmModel.gpu.name
     }
 
     override val root = pane {
@@ -57,9 +56,9 @@ class MainView : View(TITLE) {
             spacing = 10.0
             paddingAll = 10.0
             alignment = Pos.CENTER
-            setPrefSize(tileSize*2, tileSize)
+            setPrefSize(tileSize * 2, tileSize)
 
-            label("Connect to server(ip):"){
+            label("Connect to server(ip):") {
                 addClass(Styles.heading)
                 prefWidth(tileSize)
             }
@@ -67,25 +66,25 @@ class MainView : View(TITLE) {
             button("Connect") {
                 action { controller.connect(ip.text) }
             }
-            connectMessage = label{
+            connectMessage = label {
                 addClass(Styles.heading)
                 isVisible = false
             }
         }
 
-        val CPUName = label("CPU: Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz") {
-            textFill = Clock.BRIGHT_COLOR
-            font = Fonts.robotoRegular(15.0)
+        CPUName = label() {
             paddingAll = 10.0
             prefWidth = WIDTH / 2
+            alignment = Pos.CENTER_LEFT
+            addClass(Styles.header)
         }
 
-        val GPUName = label("GPU: Lexa PRO [Radeon 540/540X/550/550X / RX 540X/550/550X]") {
-            textFill = Clock.BRIGHT_COLOR
-            font = Fonts.robotoRegular(15.0)
+        GPUName = label() {
             paddingAll = 10.0
             prefWidth = WIDTH / 2
             layoutX = WIDTH - WIDTH / 2
+            alignment = Pos.CENTER_RIGHT
+            addClass(Styles.header)
         }
 
         val clock = ClockX().attachTo(this) {

@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.serialization")
 }
 
-group = "com.github.alexxxdev.hrm.core"
+group = project.property("HRMgroup") as String + ".core"
 version = project.property("HRMversion") as String
 
 dependencies {

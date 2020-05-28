@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.github.alexxxdev.hrm.windows"
+group = project.property("HRMgroup") as String + ".windows"
 version = project.property("HRMversion") as String
 
 dependencies {

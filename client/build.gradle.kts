@@ -5,7 +5,7 @@ plugins {
     id("no.tornado.fxlauncher")
 }
 
-group = "com.github.alexxxdev.hrm.client"
+group = project.property("HRMgroup") as String + ".client"
 version = project.property("HRMversion") as String
 val mainClazz = "$group.app.MyApp"
 val applicationName = "HRM Client"

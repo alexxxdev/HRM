@@ -4,7 +4,7 @@ plugins {
     application
 }
 
-group = "com.github.alexxxdev.hrm.server"
+group = project.property("HRMgroup") as String + ".server"
 version = project.property("HRMversion") as String
 val mainClazz = "$group.MainKt"
 val applicationName = "HRM Server"

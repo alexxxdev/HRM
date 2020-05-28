@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "com.github.alexxxdev.hrm.client"
-version = "1.0-SNAPSHOT"
+version = project.property("HRMversion") as String
 val mainClazz = "$group.app.MyApp"
 val applicationName = "HRM Client"
 

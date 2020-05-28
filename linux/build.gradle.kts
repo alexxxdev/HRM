@@ -3,7 +3,7 @@ plugins {
 }
 
 group = "com.github.alexxxdev.hrm.linux"
-version = "1.0-SNAPSHOT"
+version = project.property("HRMversion") as String
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))

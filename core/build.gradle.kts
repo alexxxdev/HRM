@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.alexxxdev.hrm.core"
-version = "1.0-SNAPSHOT"
+version = project.property("HRMversion") as String
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))

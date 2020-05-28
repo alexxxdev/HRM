@@ -10,8 +10,8 @@ import com.github.alexxxdev.hrm.core.OSType
 import kotlin.math.roundToInt
 
 class HRM : IHRM {
-    val io = IO()
-    var hrmModel = HRMModel()
+    private val io = IO()
+    private var hrmModel = HRMModel()
 
     init {
         hrmModel = hrmModel.copy(os = OS(name = System.getProperty("os.name"), type = OSType.Windows))

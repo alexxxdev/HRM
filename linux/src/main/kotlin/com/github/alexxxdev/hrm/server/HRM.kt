@@ -9,8 +9,8 @@ import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
 
 class HRM : IHRM {
-    val io = IO()
-    var hrmModel = HRMModel()
+    private val io = IO()
+    private var hrmModel = HRMModel()
 
     init {
         hrmModel = hrmModel.copy(
@@ -45,8 +45,7 @@ class HRM : IHRM {
         return io.getShellOutput(
             arrayOf("/bin/sh", "-c", "lshw -C display | grep product | uniq")
         )
-            .split("\n")
-            .get(0)
+            .split("\n")[0]
             .replaceBefore(":", "")
             .replace(":", "")
             .trim()

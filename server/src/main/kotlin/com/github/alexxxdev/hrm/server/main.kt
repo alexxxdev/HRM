@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     println(json.stringify(HRMModel.serializer(), hrmModel))
 
     CoroutineScope(Dispatchers.Default).launch {
-        repeat(1) {
+        while (true) {
             if (!getData(config.params)) return@launch
             println(json.stringify(HRMModel.serializer(), hrmModel))
             delay(config.refreshDataInterval)

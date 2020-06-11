@@ -7,7 +7,11 @@ import com.github.alexxxdev.hrm.client.app.Styles
 import com.github.alexxxdev.hrm.client.app.TITLE
 import com.github.alexxxdev.hrm.client.app.WIDTH
 import com.github.alexxxdev.hrm.core.HRMModel
+import eu.hansolo.medusa.Clock
+import eu.hansolo.medusa.Gauge
+import eu.hansolo.medusa.Section
 import javafx.geometry.Pos
+import javafx.scene.CacheHint
 import javafx.scene.control.Label
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -18,6 +22,8 @@ import tornadofx.attachTo
 import tornadofx.button
 import tornadofx.label
 import tornadofx.paddingAll
+import tornadofx.paddingLeft
+import tornadofx.paddingRight
 import tornadofx.pane
 import tornadofx.textfield
 import tornadofx.vbox
@@ -31,6 +37,12 @@ class MainView : View(TITLE) {
     val controller: ClientController by inject()
     lateinit var CPUName: Label
     lateinit var GPUName: Label
+    lateinit var CPULoadGauge: Gauge
+    lateinit var GPULoadGauge: Gauge
+    lateinit var CPUMemoryGauge: Gauge
+    lateinit var GPUMemoryGauge: Gauge
+    lateinit var CPUTempGauge: Gauge
+    lateinit var GPUTempGauge: Gauge
 
     fun visibilityConnectPane(value: Boolean) {
         connectPane.isVisible = value
@@ -45,10 +57,166 @@ class MainView : View(TITLE) {
     fun showModel(hrmModel: HRMModel) {
         CPUName.text = hrmModel.cpu.name
         GPUName.text = hrmModel.gpu.name
+
+        CPULoadGauge.value = hrmModel.cpu.load.toDouble()
+        GPULoadGauge.value = hrmModel.gpu.load.toDouble()
+
+        CPUMemoryGauge.maxValue = hrmModel.memory.total.toDouble()
+        CPUMemoryGauge.value = hrmModel.memory.used.toDouble()
+
+        GPUMemoryGauge.maxValue = 100.0
+        GPUMemoryGauge.value = hrmModel.gpu.usedMemory.toDouble()
+
+        CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
+        GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
     }
 
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
+
+        CPUName = label() {
+            paddingAll = 10.0
+            prefWidth = WIDTH / 2
+            alignment = Pos.CENTER_LEFT
+            addClass(Styles.header)
+        }
+
+        GPUName = label() {
+            paddingAll = 10.0
+            prefWidth = WIDTH / 2
+            layoutX = WIDTH - WIDTH / 2
+            alignment = Pos.CENTER_RIGHT
+            addClass(Styles.header)
+        }
+
+        CPULoadGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            layoutY = 10.0
+            maxValue = 100.0;
+            unit = "%"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.TILE_SPARK_LINE;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingLeft = 10
+        }
+
+        CPUMemoryGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            layoutY = 10.0 + tileSize * 2
+            title = "Memory"
+            unit = "Gb"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingLeft = 10
+        }
+
+        CPUTempGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            layoutY = 10.0 + tileSize
+            title = "Temp"
+            unit = "°C"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            setSections(
+                Section(0.0, 35.0, Color.BLUE),
+                Section(35.01, 65.0, Color.GREEN),
+                Section(65.01, 75.0, Color.ORANGE),
+                Section(75.01, 100.0, Color.RED)
+            )
+            paddingLeft = 10
+        }
+
+        GPULoadGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            angleRange = 170.0
+            layoutY = 10.0
+            layoutX = WIDTH - tileSize
+            maxValue = 100.0;
+            unit = "%"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.TILE_SPARK_LINE;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingRight = 10
+        }
+
+        GPUMemoryGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            layoutY = 10.0 + tileSize * 2
+            layoutX = WIDTH - tileSize
+            title = "Memory"
+            unit = "%"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingRight = 10
+        }
+
+        GPUTempGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize, tileSize)
+            layoutY = 10.0 + tileSize
+            layoutX = WIDTH - tileSize
+            title = "Temp"
+            unit = "°C"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION;
+            backgroundPaint = Color.TRANSPARENT;
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            setSections(
+                Section(0.0, 35.0, Color.BLUE),
+                Section(35.01, 65.0, Color.GREEN),
+                Section(65.01, 75.0, Color.ORANGE),
+                Section(75.01, 100.0, Color.RED)
+            )
+            paddingRight = 10
+        }
+
+        val clock = ClockX().attachTo(this) {
+            addClass(Styles.clock)
+            setPrefSize(tileSize * 2, tileSize * 2)
+            layoutX = WIDTH / 2 - prefWidth / 2
+            layoutY = HEIGHT / 2 - prefHeight / 2
+
+            isSecondsVisible = true
+            isDateVisible = true
+            isDayVisible = true
+            hourColor = Color.WHITE
+            minuteColor = Color.rgb(0, 191, 255)
+            secondColor = Color.WHITE
+            dateColor = Color.WHITE
+            isRunning = true
+            locale = Locale.getDefault()
+        }
 
         connectPane = vbox {
             isVisible = false
@@ -70,38 +238,6 @@ class MainView : View(TITLE) {
                 addClass(Styles.heading)
                 isVisible = false
             }
-        }
-
-        CPUName = label() {
-            paddingAll = 10.0
-            prefWidth = WIDTH / 2
-            alignment = Pos.CENTER_LEFT
-            addClass(Styles.header)
-        }
-
-        GPUName = label() {
-            paddingAll = 10.0
-            prefWidth = WIDTH / 2
-            layoutX = WIDTH - WIDTH / 2
-            alignment = Pos.CENTER_RIGHT
-            addClass(Styles.header)
-        }
-
-        val clock = ClockX().attachTo(this) {
-            addClass(Styles.clock)
-            setPrefSize(tileSize * 2, tileSize * 2)
-            layoutX = WIDTH / 2 - prefWidth / 2
-            layoutY = HEIGHT / 2 - prefHeight / 2
-
-            isSecondsVisible = true
-            isDateVisible = true
-            isDayVisible = true
-            hourColor = Color.WHITE
-            minuteColor = Color.rgb(0, 191, 255)
-            secondColor = Color.WHITE
-            dateColor = Color.WHITE
-            isRunning = true
-            locale = Locale.getDefault()
         }
     }
 }

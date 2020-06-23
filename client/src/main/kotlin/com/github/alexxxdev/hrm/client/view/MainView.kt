@@ -43,6 +43,8 @@ class MainView : View(TITLE) {
     lateinit var GPUMemoryGauge: Gauge
     lateinit var CPUTempGauge: Gauge
     lateinit var GPUTempGauge: Gauge
+    lateinit var CPUFanGauge: Gauge
+    lateinit var GPUFanGauge: Gauge
 
     fun visibilityConnectPane(value: Boolean) {
         connectPane.isVisible = value
@@ -69,6 +71,9 @@ class MainView : View(TITLE) {
 
         CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
         GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
+
+        CPUFanGauge.value = (100.0 / 1600.0) * hrmModel.cpu.fan.toDouble()
+        GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 
     override val root = pane {
@@ -143,6 +148,25 @@ class MainView : View(TITLE) {
             paddingLeft = 10
         }
 
+        CPUFanGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize * 0.8, tileSize * 0.8)
+            layoutY = tileSize * 2 - 50
+            layoutX = tileSize - 30
+            title = "Fan"
+            unit = "%"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION; //BAR
+            backgroundPaint = Color.TRANSPARENT;
+            barColor = Color.rgb(183, 183, 183)
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingLeft = 10
+            maxValue = 100.0
+        }
+
         GPULoadGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
             angleRange = 170.0
@@ -201,6 +225,25 @@ class MainView : View(TITLE) {
             paddingRight = 10
         }
 
+        GPUFanGauge = Gauge().attachTo(this) {
+            setPrefSize(tileSize * 0.8, tileSize * 0.8)
+            layoutY = tileSize * 2 - 50
+            layoutX = WIDTH - tileSize * 2 + 52
+            title = "Fan"
+            unit = "%"
+            isAutoScale = false
+            isSmoothing = true
+            skinType = Gauge.SkinType.SIMPLE_SECTION; //BAR
+            backgroundPaint = Color.TRANSPARENT;
+            barColor = Color.rgb(183, 183, 183)
+            valueColor = Clock.BRIGHT_COLOR;
+            unitColor = Clock.BRIGHT_COLOR;
+            isCache = true;
+            cacheHint = CacheHint.SPEED;
+            paddingLeft = 10
+            maxValue = 100.0
+        }
+
         val clock = ClockX().attachTo(this) {
             addClass(Styles.clock)
             setPrefSize(tileSize * 2, tileSize * 2)
@@ -230,7 +273,7 @@ class MainView : View(TITLE) {
                 addClass(Styles.heading)
                 prefWidth(tileSize)
             }
-            val ip = textfield("127.0.0.1")
+            val ip = textfield("192.168.31.137")
             button("Connect") {
                 action { controller.connect(ip.text) }
             }

@@ -23,6 +23,12 @@ class MyApp : App(MainView::class, Styles::class) {
     val controller: ClientController by inject()
     var trayIcon: TrayIcon? = null
 
+    init {
+        Thread.setDefaultUncaughtExceptionHandler { t, e ->
+            println("DefaultUncaughtExceptionHandler... " + e.localizedMessage)
+        }
+    }
+
     override fun start(stage: Stage) {
         controller.init()
         Platform.setImplicitExit(false)

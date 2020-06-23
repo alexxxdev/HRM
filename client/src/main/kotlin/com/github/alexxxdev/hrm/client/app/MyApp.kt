@@ -26,6 +26,7 @@ class MyApp : App(MainView::class, Styles::class) {
     init {
         Thread.setDefaultUncaughtExceptionHandler { t, e ->
             println("DefaultUncaughtExceptionHandler... " + e.localizedMessage)
+            controller.handleException(e)
         }
     }
 

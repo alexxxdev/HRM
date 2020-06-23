@@ -42,7 +42,7 @@ class ClientController : Controller() {
             println(text)
             view.visibilityConnectPane(false)
 
-            val job = CoroutineScope(coroutineContext).launch {
+            CoroutineScope(coroutineContext).launch {
                 var socket: Socket? = null
                 try {
                     socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
@@ -62,33 +62,29 @@ class ClientController : Controller() {
                     println("Server said: '$response'")
                     if (response == "success") {
                         while (true) {
-                            try {
-                                output.write("get\r\n")
-                                val response2 = input.readUTF8Line()
-                                println("Server said: '$response2'")
-                                if (response2 == "fail" || response2 == null) {
-                                    socket.close()
-                                    return@launch
-                                }
-                                val hrmModel = json.parse(HRMModel.serializer(), response2)
-                                Platform.runLater {
-                                    view.showModel(hrmModel)
-                                }
-                            } catch (e: Exception) {
+                            delay(1000)
+                            output.write("get\r\n")
+                            val response2 = input.readUTF8Line()
+                            println("Server said: '$response2'")
+                            if (response2 == "fail" || response2 == null) {
                                 socket.close()
-                                Platform.runLater {
-                                    view.visibilityConnectPane(true)
-                                    view.showMessage(e.cause?.localizedMessage)
-                                }
                                 return@launch
-                            } finally {
-                                delay(1000)
+                            }
+                            val hrmModel = json.parse(HRMModel.serializer(), response2)
+                            Platform.runLater {
+                                view.showModel(hrmModel)
                             }
                         }
                     }
                 }
             }
-            // job.cancel()
+        }
+    }
+
+    fun handleException(throwable: Throwable?) {
+        Platform.runLater {
+            view.visibilityConnectPane(true)
+            view.showMessage(throwable?.localizedMessage.orEmpty())
         }
     }
 }

@@ -6,6 +6,7 @@ import javafx.application.Platform
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import tornadofx.App
+import tornadofx.DefaultErrorHandler
 import java.awt.AWTException
 import java.awt.MenuItem
 import java.awt.PopupMenu
@@ -24,9 +25,8 @@ class MyApp : App(MainView::class, Styles::class) {
     var trayIcon: TrayIcon? = null
 
     init {
-        Thread.setDefaultUncaughtExceptionHandler { t, e ->
-            println("DefaultUncaughtExceptionHandler... " + e.localizedMessage)
-            controller.handleException(e)
+        DefaultErrorHandler.filter = { errorEvent ->
+            controller.handleException(errorEvent)
         }
     }
 

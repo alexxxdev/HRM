@@ -20,8 +20,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonConfiguration
 import tornadofx.Controller
-import java.net.ConnectException
+import tornadofx.DefaultErrorHandler
 import java.net.InetSocketAddress
+import java.net.SocketException
 import kotlin.coroutines.CoroutineContext
 
 class ClientController : Controller() {
@@ -29,6 +30,10 @@ class ClientController : Controller() {
     val json = Json(JsonConfiguration.Stable)
     val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         println("CoroutineExceptionHandler: " + throwable.localizedMessage)
+        Platform.runLater {
+            view.visibilityConnectPane(true)
+            view.showMessage(throwable.localizedMessage)
+        }
     }
     val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob() + coroutineExceptionHandler
 
@@ -44,36 +49,27 @@ class ClientController : Controller() {
 
             CoroutineScope(coroutineContext).launch {
                 var socket: Socket? = null
-                try {
-                    socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
-                } catch (e: ConnectException) {
-                    println("CoroutineExceptionHandler: " + e.localizedMessage)
-                    Platform.runLater {
-                        view.visibilityConnectPane(true)
-                        view.showMessage(e.localizedMessage)
-                    }
-                }
-                socket?.let {
-                    val input = socket.openReadChannel()
-                    val output = socket.openWriteChannel(autoFlush = true)
+                socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
 
-                    output.write("version:${HRMModel().getVersion()}\r\n")
-                    val response = input.readUTF8Line()
-                    println("Server said: '$response'")
-                    if (response == "success") {
-                        while (true) {
-                            delay(1000)
-                            output.write("get\r\n")
-                            val response2 = input.readUTF8Line()
-                            println("Server said: '$response2'")
-                            if (response2 == "fail" || response2 == null) {
-                                socket.close()
-                                return@launch
-                            }
-                            val hrmModel = json.parse(HRMModel.serializer(), response2)
-                            Platform.runLater {
-                                view.showModel(hrmModel)
-                            }
+                val input = socket.openReadChannel()
+                val output = socket.openWriteChannel(autoFlush = true)
+
+                output.write("version:${HRMModel().getVersion()}\r\n")
+                val response = input.readUTF8Line()
+                println("Server said: '$response'")
+                if (response == "success") {
+                    while (true) {
+                        delay(1000)
+                        output.write("get\r\n")
+                        val response2 = input.readUTF8Line()
+                        println("Server said: '$response2'")
+                        if (response2 == "fail" || response2 == null) {
+                            socket.close()
+                            return@launch
+                        }
+                        val hrmModel = json.parse(HRMModel.serializer(), response2)
+                        Platform.runLater {
+                            view.showModel(hrmModel)
                         }
                     }
                 }
@@ -81,10 +77,14 @@ class ClientController : Controller() {
         }
     }
 
-    fun handleException(throwable: Throwable?) {
-        Platform.runLater {
-            view.visibilityConnectPane(true)
-            view.showMessage(throwable?.localizedMessage.orEmpty())
+    fun handleException(throwable: DefaultErrorHandler.ErrorEvent) {
+        println("ErrorEvent.error: " + throwable.error)
+        println("ErrorEvent.thread: " + throwable.thread)
+        when (throwable.error) {
+            is SocketException -> {
+                throwable.consume()
+                coroutineExceptionHandler.handleException(coroutineContext, throwable.error)
+            }
         }
     }
 }

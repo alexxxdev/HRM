@@ -18,7 +18,6 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import tornadofx.Controller
 import tornadofx.DefaultErrorHandler
 import java.net.InetSocketAddress
@@ -27,7 +26,7 @@ import kotlin.coroutines.CoroutineContext
 
 class ClientController : Controller() {
     val view: MainView by inject()
-    val json = Json(JsonConfiguration.Stable)
+    val json = Json
     val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
         println("CoroutineExceptionHandler: " + throwable.localizedMessage)
         Platform.runLater {
@@ -67,7 +66,7 @@ class ClientController : Controller() {
                             socket.close()
                             return@launch
                         }
-                        val hrmModel = json.parse(HRMModel.serializer(), response2)
+                        val hrmModel = json.decodeFromString(HRMModel.serializer(), response2)
                         Platform.runLater {
                             view.showModel(hrmModel)
                         }

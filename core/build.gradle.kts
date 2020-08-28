@@ -8,7 +8,7 @@ version = project.property("HRMversion") as String
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    api("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0")
+    api("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0-RC")
 }
 
 tasks {

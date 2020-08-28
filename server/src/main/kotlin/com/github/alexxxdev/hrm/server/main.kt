@@ -14,12 +14,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import java.net.InetSocketAddress
 
 var hrmModel = HRMModel()
 val hrm = HRM()
-val json = Json(JsonConfiguration.Stable)
+val json = Json
 val config = Config("config")
 
 fun main(args: Array<String>) {
@@ -30,12 +29,12 @@ fun main(args: Array<String>) {
     val version = hrmModel.getVersion()
     println(version)
 
-    println(json.stringify(HRMModel.serializer(), hrmModel))
+    println(json.encodeToString(HRMModel.serializer(), hrmModel))
 
     CoroutineScope(Dispatchers.Default).launch {
         while (true) {
             if (!getData(config.params)) return@launch
-            println(json.stringify(HRMModel.serializer(), hrmModel))
+            println(json.encodeToString(HRMModel.serializer(), hrmModel))
             delay(config.refreshDataInterval)
         }
     }
@@ -71,7 +70,7 @@ fun main(args: Array<String>) {
                                 }
                                 line == "get" -> {
                                     if (versionCompatibility) {
-                                        output.write("${json.stringify(HRMModel.serializer(), hrmModel)}\r\n")
+                                        output.write("${json.encodeToString(HRMModel.serializer(), hrmModel)}\r\n")
                                     } else {
                                         output.write("fail\r\n")
                                         socket.close()

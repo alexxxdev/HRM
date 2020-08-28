@@ -2,11 +2,10 @@ package com.github.alexxxdev.hrm.server
 
 import com.github.alexxxdev.hrm.core.IO
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonConfiguration
 import java.io.File
 import java.net.NetworkInterface
 
-val jsonConfig = Json(JsonConfiguration.Stable.copy(prettyPrint = true))
+val jsonConfig = Json { prettyPrint = true }
 
 class Config(val name: String) {
     private val configFile = File(name)
@@ -56,7 +55,7 @@ class Config(val name: String) {
     private fun read() {
         try {
             val raw = configFile.readText()
-            model = jsonConfig.parse(ConfigModel.serializer(), raw)
+            model = jsonConfig.decodeFromString(ConfigModel.serializer(), raw)
             println(model)
             isEmpty = false
             isCorrect = check()
@@ -86,7 +85,7 @@ class Config(val name: String) {
                 "memory.used" to "Used Memory"
             )
         )
-        val config = jsonConfig.stringify(ConfigModel.serializer(), model)
+        val config = jsonConfig.encodeToString(ConfigModel.serializer(), model)
         configFile.writeText(config)
     }
 

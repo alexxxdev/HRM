@@ -5,7 +5,7 @@ import javafx.scene.control.Skin
 
 class ClockX : Clock() {
     override fun createDefaultSkin(): Skin<*> {
-        return SlimClockSkinX(ClockX@ this)
+        return SlimClockSkinX(this)
     }
 
     override fun getUserAgentStylesheet(): String {

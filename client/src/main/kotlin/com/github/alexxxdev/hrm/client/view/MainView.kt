@@ -97,16 +97,16 @@ class MainView : View(TITLE) {
         CPULoadGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
             layoutY = 10.0
-            maxValue = 100.0;
+            maxValue = 100.0
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.TILE_SPARK_LINE;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.TILE_SPARK_LINE
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingLeft = 10
         }
 
@@ -117,12 +117,12 @@ class MainView : View(TITLE) {
             unit = "Gb"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.SIMPLE_SECTION
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingLeft = 10
         }
 
@@ -133,12 +133,12 @@ class MainView : View(TITLE) {
             unit = "°C"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.SIMPLE_SECTION
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             setSections(
                 Section(0.0, 35.0, Color.BLUE),
                 Section(35.01, 65.0, Color.GREEN),
@@ -156,13 +156,13 @@ class MainView : View(TITLE) {
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION; //BAR
-            backgroundPaint = Color.TRANSPARENT;
+            skinType = Gauge.SkinType.SIMPLE_SECTION; // BAR
+            backgroundPaint = Color.TRANSPARENT
             barColor = Color.rgb(183, 183, 183)
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingLeft = 10
             maxValue = 100.0
         }
@@ -172,16 +172,16 @@ class MainView : View(TITLE) {
             angleRange = 170.0
             layoutY = 10.0
             layoutX = WIDTH - tileSize
-            maxValue = 100.0;
+            maxValue = 100.0
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.TILE_SPARK_LINE;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.TILE_SPARK_LINE
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingRight = 10
         }
 
@@ -193,12 +193,12 @@ class MainView : View(TITLE) {
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.SIMPLE_SECTION
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingRight = 10
         }
 
@@ -210,12 +210,12 @@ class MainView : View(TITLE) {
             unit = "°C"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION;
-            backgroundPaint = Color.TRANSPARENT;
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            skinType = Gauge.SkinType.SIMPLE_SECTION
+            backgroundPaint = Color.TRANSPARENT
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             setSections(
                 Section(0.0, 35.0, Color.BLUE),
                 Section(35.01, 65.0, Color.GREEN),
@@ -233,13 +233,13 @@ class MainView : View(TITLE) {
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION; //BAR
-            backgroundPaint = Color.TRANSPARENT;
+            skinType = Gauge.SkinType.SIMPLE_SECTION; // BAR
+            backgroundPaint = Color.TRANSPARENT
             barColor = Color.rgb(183, 183, 183)
-            valueColor = Clock.BRIGHT_COLOR;
-            unitColor = Clock.BRIGHT_COLOR;
-            isCache = true;
-            cacheHint = CacheHint.SPEED;
+            valueColor = Clock.BRIGHT_COLOR
+            unitColor = Clock.BRIGHT_COLOR
+            isCache = true
+            cacheHint = CacheHint.SPEED
             paddingLeft = 10
             maxValue = 100.0
         }

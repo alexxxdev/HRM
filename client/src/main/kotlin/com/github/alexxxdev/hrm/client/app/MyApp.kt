@@ -54,9 +54,11 @@ class MyApp : App(MainView::class, Styles::class) {
             }
             val popup = PopupMenu()
             val defaultItem = MenuItem("Show")
-            defaultItem.addActionListener(ActionListener {
-                Platform.runLater { stage.show() }
-            })
+            defaultItem.addActionListener(
+                ActionListener {
+                    Platform.runLater { stage.show() }
+                }
+            )
             val defaultItem1 = MenuItem("Exit")
             defaultItem1.addActionListener(exitListener)
             popup.add(defaultItem)

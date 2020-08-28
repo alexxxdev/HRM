@@ -19,7 +19,7 @@ dependencies {
         implementation(project(":windows"))
     }
     implementation(kotlin("stdlib-jdk8"))
-    implementation("io.ktor:ktor-network:1.3.2")
+    implementation("io.ktor:ktor-network:1.4.0")
 }
 
 tasks {

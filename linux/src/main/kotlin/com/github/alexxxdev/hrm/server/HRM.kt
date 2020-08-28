@@ -52,8 +52,10 @@ class HRM : IHRM {
     }
 
     override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
-        return listOf(Result.success(
-            hrmModel
-        ))
+        return listOf(
+            Result.success(
+                hrmModel
+            )
+        )
     }
 }

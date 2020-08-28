@@ -10,9 +10,8 @@ buildscript {
     dependencies {
         classpath(kotlin("gradle-plugin", version = "1.4.0"))
         classpath(kotlin("serialization", version = "1.4.0"))
-        classpath("org.openjfx:javafx-plugin:0.0.8")
+        classpath("org.openjfx:javafx-plugin:0.0.9")
         classpath("com.github.ben-manes:gradle-versions-plugin:0.29.0")
-        classpath("no.tornado:fxlauncher-gradle-plugin:1.0.21.1")
     }
 }
 

@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm")
     application
     id("org.openjfx.javafxplugin")
-    id("no.tornado.fxlauncher")
 }
 
 group = project.property("HRMgroup") as String + ".client"
@@ -26,6 +25,7 @@ dependencies {
     /*implementation("com.dorkbox:SystemTray:3.17")
     implementation("net.java.dev.jna:jna:5.5.0")
     implementation("net.java.dev.jna:jna-platform:5.5.0")*/
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
 }
 
 tasks {

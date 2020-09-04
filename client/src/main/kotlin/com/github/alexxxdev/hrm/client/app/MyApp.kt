@@ -15,7 +15,7 @@ import java.awt.Toolkit
 import java.awt.TrayIcon
 import java.awt.event.ActionListener
 
-const val TITLE = "Title App Name"
+const val TITLE = "HRM Client"
 const val ICON = "icon.png"
 const val WIDTH = 800.0
 const val HEIGHT = 480.0
@@ -65,21 +65,8 @@ class MyApp : App(MainView::class, Styles::class) {
             popup.addSeparator()
             popup.add(defaultItem1)
 
-            trayIcon = TrayIcon(image, "sa", popup)
-            val actionListener = ActionListener {
-                trayIcon?.displayMessage(
-                    "Action Event",
-                    "An Action Event Has Been Performed!",
-                    TrayIcon.MessageType.INFO
-                )
-            }
+            trayIcon = TrayIcon(image, TITLE, popup)
             trayIcon?.isImageAutoSize = true
-            /*trayIcon?.addActionListener(actionListener)
-            trayIcon?.addMouseListener(object : MouseAdapter() {
-                override fun mouseReleased(e: MouseEvent) {
-                    Platform.runLater { stage.show() }
-                }
-            })*/
             try {
                 tray.add(trayIcon)
             } catch (e: AWTException) {

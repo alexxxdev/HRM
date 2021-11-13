@@ -8,6 +8,7 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.cio.write
 import io.ktor.utils.io.readUTF8Line
 import javafx.application.Platform
@@ -40,6 +41,8 @@ class ClientController : Controller() {
         view.visibilityConnectPane(true)
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
+    @KtorExperimentalAPI
     fun connect(text: String?) {
         text?.let {
             val ip = it
@@ -47,21 +50,21 @@ class ClientController : Controller() {
             view.visibilityConnectPane(false)
 
             CoroutineScope(coroutineContext).launch {
-                var socket: Socket? = null
-                socket = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
+                val socket: Socket =
+                    aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
 
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)
 
                 output.write("version:${HRMModel().getVersion()}\r\n")
                 val response = input.readUTF8Line()
-                println("Server said: '$response'")
+                // println("Server said: '$response'")
                 if (response == "success") {
                     while (true) {
                         delay(1000)
                         output.write("get\r\n")
                         val response2 = input.readUTF8Line()
-                        println("Server said: '$response2'")
+                        // println("Server said: '$response2'")
                         if (response2 == "fail" || response2 == null) {
                             socket.close()
                             return@launch

@@ -2,6 +2,7 @@ package com.github.alexxxdev.hrm.client.view
 
 import com.github.alexxxdev.hrm.client.ClientController
 import com.github.alexxxdev.hrm.client.ClockX
+import com.github.alexxxdev.hrm.client.MyTileSparklineSkin
 import com.github.alexxxdev.hrm.client.app.HEIGHT
 import com.github.alexxxdev.hrm.client.app.Styles
 import com.github.alexxxdev.hrm.client.app.TITLE
@@ -10,6 +11,7 @@ import com.github.alexxxdev.hrm.core.HRMModel
 import eu.hansolo.medusa.Clock
 import eu.hansolo.medusa.Gauge
 import eu.hansolo.medusa.Section
+import io.ktor.util.KtorExperimentalAPI
 import javafx.geometry.Pos
 import javafx.scene.CacheHint
 import javafx.scene.control.Label
@@ -72,10 +74,11 @@ class MainView : View(TITLE) {
         CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
         GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
 
-        CPUFanGauge.value = (100.0 / 2778.0) * hrmModel.cpu.fan.toDouble()
+        CPUFanGauge.value = (100.0 / 1510.0) * hrmModel.cpu.fan.toDouble()
         GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 
+    @KtorExperimentalAPI
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
 
@@ -95,13 +98,16 @@ class MainView : View(TITLE) {
         }
 
         CPULoadGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize, tileSize)
+            setPrefSize(tileSize * 1.6, tileSize)
+            skinType = Gauge.SkinType.TILE_SPARK_LINE
+            averagingPeriod = 30
             layoutY = 10.0
+            minValue = 0.0
             maxValue = 100.0
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.TILE_SPARK_LINE
+            isAnimated = false
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
@@ -112,12 +118,12 @@ class MainView : View(TITLE) {
 
         CPUMemoryGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
+            skinType = Gauge.SkinType.SIMPLE_SECTION
             layoutY = 10.0 + tileSize * 2
             title = "Memory"
             unit = "Gb"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
@@ -128,35 +134,37 @@ class MainView : View(TITLE) {
 
         CPUTempGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
+            skinType = Gauge.SkinType.SIMPLE_SECTION
             layoutY = 10.0 + tileSize
             title = "Temp"
             unit = "°C"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
             isCache = true
             cacheHint = CacheHint.SPEED
+            minValue = 25.0
+            maxValue = 120.0
             setSections(
-                Section(0.0, 35.0, Color.BLUE),
+                Section(25.0, 35.0, Color.BLUE),
                 Section(35.01, 65.0, Color.GREEN),
-                Section(65.01, 75.0, Color.ORANGE),
-                Section(75.01, 100.0, Color.RED)
+                Section(65.01, 85.0, Color.ORANGE),
+                Section(85.01, 120.0, Color.RED)
             )
             paddingLeft = 10
         }
 
         CPUFanGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize * 0.8, tileSize * 0.8)
+            skinType = Gauge.SkinType.SIMPLE_SECTION // BAR
             layoutY = tileSize * 2 - 50
             layoutX = tileSize - 30
             title = "Fan"
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION; // BAR
             backgroundPaint = Color.TRANSPARENT
             barColor = Color.rgb(183, 183, 183)
             valueColor = Clock.BRIGHT_COLOR
@@ -168,15 +176,16 @@ class MainView : View(TITLE) {
         }
 
         GPULoadGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize, tileSize)
+            setPrefSize(tileSize * 1.6, tileSize)
+            skinType = Gauge.SkinType.TILE_SPARK_LINE
+            averagingPeriod = 25
             angleRange = 170.0
             layoutY = 10.0
-            layoutX = WIDTH - tileSize
+            layoutX = WIDTH - tileSize * 1.6
             maxValue = 100.0
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.TILE_SPARK_LINE
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
@@ -187,13 +196,13 @@ class MainView : View(TITLE) {
 
         GPUMemoryGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
+            skinType = Gauge.SkinType.SIMPLE_SECTION
             layoutY = 10.0 + tileSize * 2
             layoutX = WIDTH - tileSize
             title = "Memory"
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
@@ -204,13 +213,13 @@ class MainView : View(TITLE) {
 
         GPUTempGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
+            skinType = Gauge.SkinType.SIMPLE_SECTION
             layoutY = 10.0 + tileSize
             layoutX = WIDTH - tileSize
             title = "Temp"
             unit = "°C"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION
             backgroundPaint = Color.TRANSPARENT
             valueColor = Clock.BRIGHT_COLOR
             unitColor = Clock.BRIGHT_COLOR
@@ -227,13 +236,13 @@ class MainView : View(TITLE) {
 
         GPUFanGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize * 0.8, tileSize * 0.8)
+            skinType = Gauge.SkinType.SIMPLE_SECTION // BAR
             layoutY = tileSize * 2 - 50
             layoutX = WIDTH - tileSize * 2 + 52
             title = "Fan"
             unit = "%"
             isAutoScale = false
             isSmoothing = true
-            skinType = Gauge.SkinType.SIMPLE_SECTION; // BAR
             backgroundPaint = Color.TRANSPARENT
             barColor = Color.rgb(183, 183, 183)
             valueColor = Clock.BRIGHT_COLOR
@@ -244,7 +253,7 @@ class MainView : View(TITLE) {
             maxValue = 100.0
         }
 
-        val clock = ClockX().attachTo(this) {
+        ClockX().attachTo(this) {
             addClass(Styles.clock)
             setPrefSize(tileSize * 2, tileSize * 2)
             layoutX = WIDTH / 2 - prefWidth / 2
@@ -268,12 +277,13 @@ class MainView : View(TITLE) {
             paddingAll = 10.0
             alignment = Pos.CENTER
             setPrefSize(tileSize * 2, tileSize)
-
+            CPULoadGauge.skin = MyTileSparklineSkin(CPULoadGauge)
+            GPULoadGauge.skin = MyTileSparklineSkin(GPULoadGauge)
             label("Connect to server(ip):") {
                 addClass(Styles.heading)
                 prefWidth(tileSize)
             }
-            val ip = textfield("192.168.31.137")
+            val ip = textfield("192.168.0.11")
             button("Connect") {
                 action { controller.connect(ip.text) }
             }

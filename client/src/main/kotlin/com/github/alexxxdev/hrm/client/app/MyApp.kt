@@ -5,6 +5,7 @@ import com.github.alexxxdev.hrm.client.view.MainView
 import javafx.application.Platform
 import javafx.scene.image.Image
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import tornadofx.App
 import tornadofx.DefaultErrorHandler
 import java.awt.AWTException
@@ -34,9 +35,9 @@ class MyApp : App(MainView::class, Styles::class) {
         controller.init()
         Platform.setImplicitExit(false)
         with(stage) {
-            // initStyle(StageStyle.TRANSPARENT);
+            initStyle(StageStyle.TRANSPARENT)
             isResizable = false
-            // isFullScreen = true
+            isFullScreen = true
             // fullScreenExitHint="ds"
             minWidth = WIDTH
             minHeight = HEIGHT

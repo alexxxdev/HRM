@@ -12,9 +12,14 @@ import eu.hansolo.medusa.Clock
 import eu.hansolo.medusa.Gauge
 import eu.hansolo.medusa.Section
 import io.ktor.util.KtorExperimentalAPI
+import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.CacheHint
+import javafx.scene.Cursor
 import javafx.scene.control.Label
+import javafx.scene.layout.Background
+import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import tornadofx.View
@@ -81,6 +86,19 @@ class MainView : View(TITLE) {
     @KtorExperimentalAPI
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
+
+        cursor = Cursor.NONE
+
+        button("Hide") {
+            setPrefSize(100.0, 30.0)
+            background = Background(BackgroundFill(Color.rgb(43, 43, 43), CornerRadii(4.0), Insets.EMPTY))
+            textFill = Color.rgb(58, 58, 58)
+            layoutX = WIDTH / 2 - 50
+            layoutY = HEIGHT - 34
+            action {
+                currentStage?.hide()
+            }
+        }
 
         CPUName = label() {
             paddingAll = 10.0

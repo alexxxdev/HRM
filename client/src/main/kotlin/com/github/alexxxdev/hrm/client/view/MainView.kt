@@ -79,7 +79,7 @@ class MainView : View(TITLE) {
         CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
         GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
 
-        CPUFanGauge.value = (100.0 / 1510.0) * hrmModel.cpu.fan.toDouble()
+        CPUFanGauge.value = hrmModel.cpu.fan.toDouble()
         GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 

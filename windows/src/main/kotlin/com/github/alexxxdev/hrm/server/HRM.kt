@@ -50,6 +50,7 @@ class HRM : IHRM {
             var CPUload: Float = 0f
             var CPUtemperature: Float = 0f
             var CPUfan: Float = 0f
+            var CPUfanMax: Float = 0f
             var GPUload: Float = 0f
             var GPUtemperature: Float = 0f
             var GPUfan: Float = 0f
@@ -57,32 +58,33 @@ class HRM : IHRM {
             var MemoryUsed: Float = 0f
             var MemoryTotal: Float = 0f
             list.forEach {
-                if (it[0] == params.get("cpu.load") && it[1] == "Load") {
-                    CPUload = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("cpu.load") && it[2] == "Load") {
+                    CPUload = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("cpu.temperature") && it[1] == "Temperature") {
-                    CPUtemperature = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("cpu.temperature") && it[2] == "Temperature") {
+                    CPUtemperature = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("cpu.fan") && it[1] == "Fan") {
-                    CPUfan = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("cpu.fan") && it[2] == "Fan") {
+                    CPUfan = it[3].replace(',', '.').toFloat()
+                    CPUfanMax = it[0].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("gpu.load") && it[1] == "Load") {
-                    GPUload = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("gpu.load") && it[2] == "Load") {
+                    GPUload = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("gpu.temperature") && it[1] == "Temperature") {
-                    GPUtemperature = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("gpu.temperature") && it[2] == "Temperature") {
+                    GPUtemperature = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("gpu.fan") && it[1] == "Control") {
-                    GPUfan = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("gpu.fan") && it[2] == "Control") {
+                    GPUfan = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("memory.used") && it[1] == "Data") {
-                    MemoryUsed = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("memory.used") && it[2] == "Data") {
+                    MemoryUsed = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("memory.total") && it[1] == "Load") {
-                    MemoryTotal = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("memory.total") && it[2] == "Load") {
+                    MemoryTotal = it[3].replace(',', '.').toFloat()
                 }
-                if (it[0] == params.get("gpu.memory") && it[1] == "Load") {
-                    GPUUsedMemory = it[2].replace(',', '.').toFloat()
+                if (it[1] == params.get("gpu.memory") && it[2] == "Load") {
+                    GPUUsedMemory = it[3].replace(',', '.').toFloat()
                 }
             }
             listOf(
@@ -91,7 +93,7 @@ class HRM : IHRM {
                         cpu = hrmModel.cpu.copy(
                             load = CPUload,
                             temperature = CPUtemperature,
-                            fan = CPUfan
+                            fan = (CPUfan * (100.0 / CPUfanMax)).toFloat()
                         ),
                         gpu = hrmModel.gpu.copy(
                             load = GPUload,
@@ -111,14 +113,15 @@ class HRM : IHRM {
 
     @Throws(Exception::class)
     private fun getValuesFromWMI(): List<List<String>>? {
-        return io.getShellOutput("powershell.exe get-wmiobject -namespace root\\OpenHardwareMonitor -query 'SELECT Value,Name,SensorType FROM Sensor'")
+        return io.getShellOutput("powershell.exe get-wmiobject -namespace root\\OpenHardwareMonitor -query 'SELECT Max,Value,Name,SensorType FROM Sensor'")
             .split("PSComputerName")
             .map {
                 it.split("\r\n")
                     .filter {
                         it.startsWith("Name") ||
                                 it.startsWith("SensorType") ||
-                                it.startsWith("Value")
+                                it.startsWith("Value") ||
+                                it.startsWith("Max")
                     }
                     .map {
                         it.replaceBefore(":", "")

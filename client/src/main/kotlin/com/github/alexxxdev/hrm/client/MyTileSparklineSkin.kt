@@ -36,6 +36,7 @@ import java.util.Locale
 /**
  * Created by hansolo on 05.12.16.
  */
+@Suppress("MagicNumber", "LongMethod", "TooManyFunctions", "ComplexCondition")
 class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
     // private var size = 0.0
     private var width = 0.0
@@ -67,7 +68,30 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
     private val currentValueListener: InvalidationListener
     private val averagingListener: InvalidationListener
 
-    // ******************** Initialization ************************************
+    init {
+        if (gauge.isAutoScale) gauge.calcAutoScale()
+        low = gauge.maxValue
+        high = gauge.minValue
+        minValue = gauge.minValue
+        maxValue = gauge.maxValue
+        range = gauge.range
+        stdDeviation = 0.0
+        formatString = StringBuilder("%.").append(gauge.decimals.toString()).append("f").toString()
+        locale = gauge.locale
+        noOfDatapoints = gauge.averagingPeriod
+        dataList = LinkedList()
+        currentValueListener = InvalidationListener { _: Observable? -> handleEvents("CURRENT_VALUE") }
+        averagingListener = InvalidationListener { _: Observable? -> handleEvents("AVERAGING_PERIOD") }
+        for (i in 0 until noOfDatapoints) {
+            dataList.add(minValue)
+        }
+
+        // To get smooth lines in the chart we need at least 4 values
+        require(noOfDatapoints >= MIN_LINE) { "Please increase the averaging period to a value larger than 3." }
+        initGraphics()
+        registerListeners()
+    }
+
     private fun initGraphics() {
         // Set initial size
         if (java.lang.Double.compare(gauge.prefWidth, 0.0) <= 0 || java.lang.Double.compare(
@@ -168,62 +192,70 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
     @Suppress("ControlFlowWithEmptyBody")
     override fun handleEvents(EVENT_TYPE: String) {
         super.handleEvents(EVENT_TYPE)
-        if ("RECALC" == EVENT_TYPE) {
-            minValue = gauge.minValue
-            maxValue = gauge.maxValue
-            range = gauge.range
-            redraw()
-        } else if ("VISIBILITY" == EVENT_TYPE) {
-            Helper.enableNode(titleText, !gauge.title.isEmpty())
-            Helper.enableNode(valueText, gauge.isValueVisible)
-            Helper.enableNode(unitText, !gauge.unit.isEmpty())
-            Helper.enableNode(subTitleText, !gauge.subTitle.isEmpty())
-            Helper.enableNode(averageLine, gauge.isAverageVisible)
-            Helper.enableNode(averageText, gauge.isAverageVisible)
-            Helper.enableNode(stdDeviationArea, gauge.isAverageVisible)
-            redraw()
-        } else if ("SECTION" == EVENT_TYPE) {
-        } else if ("ALERT" == EVENT_TYPE) {
-        } else if ("VALUE" == EVENT_TYPE) {
-            if (gauge.isAnimated) {
-                gauge.isAnimated = false
+        when (EVENT_TYPE) {
+            "RECALC" -> {
+                minValue = gauge.minValue
+                maxValue = gauge.maxValue
+                range = gauge.range
+                redraw()
             }
-            if (!gauge.isAveragingEnabled) {
-                gauge.isAveragingEnabled = true
+            "VISIBILITY" -> {
+                Helper.enableNode(titleText, !gauge.title.isEmpty())
+                Helper.enableNode(valueText, gauge.isValueVisible)
+                Helper.enableNode(unitText, !gauge.unit.isEmpty())
+                Helper.enableNode(subTitleText, !gauge.subTitle.isEmpty())
+                Helper.enableNode(averageLine, gauge.isAverageVisible)
+                Helper.enableNode(averageText, gauge.isAverageVisible)
+                Helper.enableNode(stdDeviationArea, gauge.isAverageVisible)
+                redraw()
             }
-            val value = Helper.clamp(minValue, maxValue, gauge.value)
-            addData(value)
-            drawChart(value)
-        } else if ("CURRENT_VALUE" == EVENT_TYPE) {
-        } else if ("AVERAGING_PERIOD" == EVENT_TYPE) {
-            noOfDatapoints = gauge.averagingPeriod
-            dataList.clear()
-            // To get smooth lines in the chart we need at least 4 values
-            require(noOfDatapoints >= 4) { "Please increase the averaging period to a value larger than 3." }
-            for (i in 0 until noOfDatapoints) {
-                dataList.add(minValue)
+//            "SECTION" -> {
+//            }
+//            "ALERT" -> {
+//            }
+            "VALUE" -> {
+                if (gauge.isAnimated) {
+                    gauge.isAnimated = false
+                }
+                if (!gauge.isAveragingEnabled) {
+                    gauge.isAveragingEnabled = true
+                }
+                val value = Helper.clamp(minValue, maxValue, gauge.value)
+                addData(value)
+                drawChart(value)
             }
-            pathElements!!.clear()
-            pathElements!!.add(0, MoveTo())
-            for (i in 1 until noOfDatapoints) {
-                pathElements!!.add(i, LineTo())
+//            "CURRENT_VALUE" -> {
+//            }
+            "AVERAGING_PERIOD" -> {
+                noOfDatapoints = gauge.averagingPeriod
+                dataList.clear()
+                // To get smooth lines in the chart we need at least 4 values
+                require(noOfDatapoints >= 4) { "Please increase the averaging period to a value larger than 3." }
+                for (i in 0 until noOfDatapoints) {
+                    dataList.add(minValue)
+                }
+                pathElements!!.clear()
+                pathElements!!.add(0, MoveTo())
+                for (i in 1 until noOfDatapoints) {
+                    pathElements!!.add(i, LineTo())
+                }
+                sparkLine!!.elements.setAll(pathElements)
+                redraw()
             }
-            sparkLine!!.elements.setAll(pathElements)
-            redraw()
         }
     }
 
-    private fun addData(VALUE: Double) {
+    private fun addData(value: Double) {
         if (dataList.size <= noOfDatapoints) {
             Collections.rotate(dataList, -1)
-            dataList[noOfDatapoints - 1] = VALUE
+            dataList[noOfDatapoints - 1] = value
         } else {
-            dataList.add(VALUE)
+            dataList.add(value)
         }
         stdDeviation = Statistics.getStdDev(dataList)
     }
 
-    private fun drawChart(VALUE: Double) {
+    private fun drawChart(value: Double) {
         low = Statistics.getMin(dataList)
         high = Statistics.getMax(dataList)
         if (java.lang.Double.compare(low, high) == 0) {
@@ -263,7 +295,7 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         stdDeviationArea!!.y = averageLine!!.startY - stdDeviation * 0.5 * stepY
         stdDeviationArea!!.height = stdDeviation * stepY
         valueText!!.text =
-            Helper.formatNumber(gauge.locale, gauge.formatString, gauge.decimals, VALUE)
+            Helper.formatNumber(gauge.locale, gauge.formatString, gauge.decimals, value)
         averageText!!.text = String.format(locale, formatString, average)
         highText!!.text = String.format(locale, formatString, high)
         lowText!!.text = String.format(locale, formatString, low)
@@ -277,12 +309,12 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
     }
 
     // ******************** Smoothing *****************************************
-    fun smooth(DATA_LIST: List<Double?>) {
-        val size = DATA_LIST.size
+    fun smooth(dataList: List<Double?>) {
+        val size = dataList.size
         val x = DoubleArray(size)
         val y = DoubleArray(size)
-        low = Statistics.getMin(DATA_LIST)
-        high = Statistics.getMax(DATA_LIST)
+        low = Statistics.getMin(dataList)
+        high = Statistics.getMax(dataList)
         if (java.lang.Double.compare(low, high) == 0) {
             low = minValue
             high = maxValue
@@ -296,7 +328,7 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         val stepY = graphBounds!!.height / range
         for (i in 0 until size) {
             x[i] = minX + i * stepX
-            y[i] = maxY - Math.abs(low - DATA_LIST[i]!!) * stepY
+            y[i] = maxY - Math.abs(low - dataList[i]!!) * stepY
         }
         val px = computeControlPoints(x)
         val py = computeControlPoints(y)
@@ -318,8 +350,8 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         dot!!.centerY = y[size - 1]
     }
 
-    private fun computeControlPoints(K: DoubleArray): Pair<Array<Double?>, Array<Double?>> {
-        val n = K.size - 1
+    private fun computeControlPoints(k: DoubleArray): Pair<Array<Double?>, Array<Double?>> {
+        val n = k.size - 1
         val p1 = arrayOfNulls<Double>(n)
         val p2 = arrayOfNulls<Double>(n)
 
@@ -332,19 +364,19 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         /*left most segment*/a[0] = 0.0
         b[0] = 2.0
         c[0] = 1.0
-        r[0] = K[0] + 2 * K[1]
+        r[0] = k[0] + 2 * k[1]
 
         /*internal segments*/for (i in 1 until n - 1) {
             a[i] = 1.0
             b[i] = 4.0
             c[i] = 1.0
-            r[i] = 4 * K[i] + 2 * K[i + 1]
+            r[i] = 4 * k[i] + 2 * k[i + 1]
         }
 
         /*right segment*/a[n - 1] = 2.0
         b[n - 1] = 7.0
         c[n - 1] = 0.0
-        r[n - 1] = 8 * K[n - 1] + K[n]
+        r[n - 1] = 8 * k[n - 1] + k[n]
 
         /*solves Ax = b with the Thomas algorithm*/for (i in 1 until n) {
             val m = a[i] / b[i - 1]
@@ -356,9 +388,9 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
             p1[i] = (r[i] - c[i] * p1[i + 1]!!) / b[i]
         }
         for (i in 0 until n - 1) {
-            p2[i] = 2 * K[i + 1] - p1[i + 1]!!
+            p2[i] = 2 * k[i + 1] - p1[i + 1]!!
         }
-        p2[n - 1] = 0.5 * (K[n] + p1[n - 1]!!)
+        p2[n - 1] = 0.5 * (k[n] + p1[n - 1]!!)
         return Pair(p1, p2)
     }
 
@@ -479,28 +511,7 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         dot!!.fill = gauge.barColor
     }
 
-    // ******************** Constructors **************************************
-    init {
-        if (gauge.isAutoScale) gauge.calcAutoScale()
-        low = gauge.maxValue
-        high = gauge.minValue
-        minValue = gauge.minValue
-        maxValue = gauge.maxValue
-        range = gauge.range
-        stdDeviation = 0.0
-        formatString = StringBuilder("%.").append(Integer.toString(gauge.decimals)).append("f").toString()
-        locale = gauge.locale
-        noOfDatapoints = gauge.averagingPeriod
-        dataList = LinkedList()
-        currentValueListener = InvalidationListener { _: Observable? -> handleEvents("CURRENT_VALUE") }
-        averagingListener = InvalidationListener { _: Observable? -> handleEvents("AVERAGING_PERIOD") }
-        for (i in 0 until noOfDatapoints) {
-            dataList.add(minValue)
-        }
-
-        // To get smooth lines in the chart we need at least 4 values
-        require(noOfDatapoints >= 4) { "Please increase the averaging period to a value larger than 3." }
-        initGraphics()
-        registerListeners()
+    companion object {
+        private const val MIN_LINE = 4
     }
 }

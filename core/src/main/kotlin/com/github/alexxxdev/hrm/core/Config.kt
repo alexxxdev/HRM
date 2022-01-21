@@ -11,14 +11,14 @@ val jsonConfig = Json {
 
 abstract class Config<T>(name: String) {
 
-    protected val configFile = File(name)
+    private var isEmpty = true
+    private var isCorrect = false
+    private val configFile = File(name)
+    private val absolutePath: String = configFile.absolutePath
+
     protected abstract var model: T
     protected abstract fun prefillConfig(): T
     protected abstract fun serializer(): KSerializer<T>
-
-    private var isEmpty = true
-    private var isCorrect = false
-    private val absolutePath: String = configFile.absolutePath
 
     fun readConfig(): Boolean {
         return if (exists()) {
@@ -66,6 +66,7 @@ abstract class Config<T>(name: String) {
 
     private fun createNewFile(): Boolean = configFile.createNewFile()
 
+    @Suppress("FunctionOnlyReturningConstant")
     private fun check(): Boolean {
         // TODO
         return true

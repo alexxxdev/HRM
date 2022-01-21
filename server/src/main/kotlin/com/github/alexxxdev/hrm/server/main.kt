@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.awt.AWTException
+import java.awt.Image
 import java.awt.MenuItem
 import java.awt.PopupMenu
 import java.awt.SystemTray
@@ -37,8 +38,6 @@ val config = ServerConfig("config")
 var trayIcon: TrayIcon? = null
 var job: Job? = null
 
-
-@OptIn(KtorExperimentalAPI::class)
 fun main() {
     if (!config.readConfig()) return
 
@@ -51,36 +50,13 @@ fun main() {
 
     job = createJob()
 
-    if (SystemTray.isSupported()) {
-        val tray = SystemTray.getSystemTray()
-        val image: java.awt.Image =
-            Toolkit.getDefaultToolkit().getImage(Toolkit::javaClass.javaClass.classLoader.getResource(ICON))
-        val exitListener = ActionListener {
-            println("Exiting...")
-            tray.remove(trayIcon)
-            exitProcess(0)
-        }
-        val popup = PopupMenu()
-        val defaultItem = MenuItem("Restart")
-        defaultItem.addActionListener {
-            job?.cancel()
-            job = createJob()
-        }
-        val defaultItem1 = MenuItem("Exit")
-        defaultItem1.addActionListener(exitListener)
-        popup.add(defaultItem)
-        popup.addSeparator()
-        popup.add(defaultItem1)
+    addSystemTray()
 
-        trayIcon = TrayIcon(image, TITLE, popup)
-        trayIcon?.isImageAutoSize = true
-        try {
-            tray.add(trayIcon)
-        } catch (e: AWTException) {
-            System.err.println("TrayIcon could not be added.")
-        }
-    }
+    runServer(version)
+}
 
+@OptIn(KtorExperimentalAPI::class)
+private fun runServer(version: String) {
     runBlocking {
         val server = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().bind(InetSocketAddress(config.ip, config.port))
         println("Started server ...")
@@ -136,6 +112,38 @@ fun main() {
                     }
                 }
             }
+        }
+    }
+}
+
+private fun addSystemTray() {
+    if (SystemTray.isSupported()) {
+        val tray = SystemTray.getSystemTray()
+        val image: Image =
+            Toolkit.getDefaultToolkit().getImage(Toolkit::javaClass.javaClass.classLoader.getResource(ICON))
+        val exitListener = ActionListener {
+            println("Exiting...")
+            tray.remove(trayIcon)
+            exitProcess(0)
+        }
+        val popup = PopupMenu()
+        val defaultItem = MenuItem("Restart")
+        defaultItem.addActionListener {
+            job?.cancel()
+            job = createJob()
+        }
+        val defaultItem1 = MenuItem("Exit")
+        defaultItem1.addActionListener(exitListener)
+        popup.add(defaultItem)
+        popup.addSeparator()
+        popup.add(defaultItem1)
+
+        trayIcon = TrayIcon(image, TITLE, popup)
+        trayIcon?.isImageAutoSize = true
+        try {
+            tray.add(trayIcon)
+        } catch (e: AWTException) {
+            System.err.println("TrayIcon could not be added.")
         }
     }
 }

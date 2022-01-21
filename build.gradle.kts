@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id("io.gitlab.arturbosch.detekt").version("1.12.0")
+    id("io.gitlab.arturbosch.detekt").version("1.19.0")
 }
 
 allprojects {
@@ -36,13 +36,13 @@ allprojects {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.12.0")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0")
 }
 
-val detektFormat by tasks.registering(Detekt::class) {
+val detektAll by tasks.registering(Detekt::class) {
     description = "Reformats whole code base."
     parallel = true
-    disableDefaultRuleSets = true
+    disableDefaultRuleSets = false
     buildUponDefaultConfig = true
     autoCorrect = true
     setSource(files(projectDir))
@@ -50,11 +50,11 @@ val detektFormat by tasks.registering(Detekt::class) {
     include("**/*.kts")
     exclude("**/resources/**")
     exclude("**/build/**")
-    config.setFrom(files(projectDir.resolve("${rootProject.projectDir}/detekt/format.yml")))
+    config.setFrom(files(projectDir.resolve("${rootProject.projectDir}/detekt/all.yml")))
     reports {
-        xml.enabled = false
-        html.enabled = true
-        txt.enabled = true
+        xml.required.set(false)
+        html.required.set(true)
+        txt.required.set(true)
     }
 }
 

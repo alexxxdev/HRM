@@ -9,6 +9,7 @@ import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
 import kotlin.math.roundToInt
 
+@Suppress("MagicNumber")
 class HRM : IHRM {
     private val io = IO()
     private var hrmModel = HRMModel()
@@ -40,23 +41,24 @@ class HRM : IHRM {
             .trim()
     }
 
+    @Suppress("VariableNaming", "ComplexMethod", "LongMethod")
     override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
         val list = getValuesFromWMI()
-        return if (list.isNullOrEmpty()) {
+        return if (list.isEmpty()) {
             println("Open Hardware Monitor not Running!")
             println("Please run Open Hardware Monitor with Admin Rights")
             listOf(Result.failure(java.lang.Exception()))
         } else {
-            var CPUload: Float = 0f
-            var CPUtemperature: Float = 0f
-            var CPUfan: Float = 0f
-            var CPUfanMax: Float = 0f
-            var GPUload: Float = 0f
-            var GPUtemperature: Float = 0f
-            var GPUfan: Float = 0f
-            var GPUUsedMemory: Float = 0f
-            var MemoryUsed: Float = 0f
-            var MemoryTotal: Float = 0f
+            var CPUload = 0f
+            var CPUtemperature = 0f
+            var CPUfan = 0f
+            var CPUfanMax = 0f
+            var GPUload = 0f
+            var GPUtemperature = 0f
+            var GPUfan = 0f
+            var GPUUsedMemory = 0f
+            var MemoryUsed = 0f
+            var MemoryTotal = 0f
             list.forEach {
                 if (it[1] == params.get("cpu.load") && it[2] == "Load") {
                     CPUload = it[3].replace(',', '.').toFloat()
@@ -88,31 +90,56 @@ class HRM : IHRM {
                 }
             }
             listOf(
-                Result.success(
-                    hrmModel.copy(
-                        cpu = hrmModel.cpu.copy(
-                            load = CPUload,
-                            temperature = CPUtemperature,
-                            fan = (CPUfan * (100.0 / CPUfanMax)).toFloat()
-                        ),
-                        gpu = hrmModel.gpu.copy(
-                            load = GPUload,
-                            temperature = GPUtemperature,
-                            fan = GPUfan,
-                            usedMemory = GPUUsedMemory
-                        ),
-                        memory = hrmModel.memory.copy(
-                            used = MemoryUsed,
-                            total = ((MemoryUsed * 100) / MemoryTotal).roundToInt().toFloat()
-                        )
-                    )
+                generateResult(
+                    CPUload,
+                    CPUtemperature,
+                    CPUfan,
+                    CPUfanMax,
+                    GPUload,
+                    GPUtemperature,
+                    GPUfan,
+                    GPUUsedMemory,
+                    MemoryUsed,
+                    MemoryTotal
                 )
             )
         }
     }
 
+    @Suppress("FunctionParameterNaming", "LongParameterList")
+    private fun generateResult(
+        CPUload: Float,
+        CPUtemperature: Float,
+        CPUfan: Float,
+        CPUfanMax: Float,
+        GPUload: Float,
+        GPUtemperature: Float,
+        GPUfan: Float,
+        GPUUsedMemory: Float,
+        MemoryUsed: Float,
+        MemoryTotal: Float
+    ) = Result.success(
+        hrmModel.copy(
+            cpu = hrmModel.cpu.copy(
+                load = CPUload,
+                temperature = CPUtemperature,
+                fan = (CPUfan * (100.0 / CPUfanMax)).toFloat()
+            ),
+            gpu = hrmModel.gpu.copy(
+                load = GPUload,
+                temperature = GPUtemperature,
+                fan = GPUfan,
+                usedMemory = GPUUsedMemory
+            ),
+            memory = hrmModel.memory.copy(
+                used = MemoryUsed,
+                total = ((MemoryUsed * 100) / MemoryTotal).roundToInt().toFloat()
+            )
+        )
+    )
+
     @Throws(Exception::class)
-    private fun getValuesFromWMI(): List<List<String>>? {
+    private fun getValuesFromWMI(): List<List<String>> {
         return io.getShellOutput("powershell.exe get-wmiobject -namespace root\\OpenHardwareMonitor -query 'SELECT Max,Value,Name,SensorType FROM Sensor'")
             .split("PSComputerName")
             .map {

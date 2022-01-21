@@ -54,7 +54,8 @@ class ClientController : Controller() {
 
             CoroutineScope(coroutineContext).launch {
                 val socket: Socket =
-                    aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().connect(InetSocketAddress(ip, 2323))
+                    aSocket(ActorSelectorManager(Dispatchers.IO)).tcp()
+                        .connect(InetSocketAddress(ip, clientConfig.serverPort))
 
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)

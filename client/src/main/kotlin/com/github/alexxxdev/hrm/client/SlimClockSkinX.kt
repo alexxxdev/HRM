@@ -21,6 +21,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 
+@Suppress("VariableNaming", "MagicNumber", "LongMethod", "ComplexCondition")
 class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
     private val HOUR_FORMATTER = DateTimeFormatter.ofPattern("HH")
     private val MINUTE_FORMATTER = DateTimeFormatter.ofPattern("mm")
@@ -41,7 +42,6 @@ class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
     }
 
     override fun initGraphics() {
-
         if (clock.prefWidth.compareTo(0.0) <= 0 ||
             clock.prefHeight.compareTo(0.0) <= 0 ||
             clock.width.compareTo(0.0) <= 0 ||
@@ -114,8 +114,7 @@ class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
         children.setAll(pane)
     }
 
-    override fun updateAlarms() {
-    }
+    override fun updateAlarms() = Unit
 
     override fun resize() {
         val width = clock.width - clock.insets.left - clock.insets.right
@@ -213,7 +212,6 @@ class SlimClockSkinX(clock: ClockX) : ClockSkinBase(clock) {
             secondBackgroundCircle?.isManaged = isSecondsVisible
             secondArc?.isVisible = isSecondsVisible
             secondArc?.isManaged = isSecondsVisible
-        } else if ("FINISHED" == EVENT_TYPE) {
         }
     }
 }

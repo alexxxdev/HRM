@@ -43,6 +43,7 @@ import tornadofx.textfield
 import tornadofx.vbox
 import java.util.Locale
 
+@Suppress("VariableNaming", "MagicNumber")
 class MainView : View(TITLE) {
     private var tileSize = HEIGHT / 3
     private lateinit var connectPane: Pane
@@ -62,40 +63,6 @@ class MainView : View(TITLE) {
     lateinit var weatherBox: Pane
     lateinit var weatherDescBox: Pane
     lateinit var textIP: TextField
-
-    fun visibilityConnectPane(value: Boolean) {
-        connectPane.isVisible = value
-        connectMessage.isVisible = false
-    }
-
-    fun showMessage(localizedMessage: String?) {
-        connectMessage.text = localizedMessage
-        connectMessage.isVisible = true
-    }
-
-    fun setIP(serverIP: String) {
-        textIP.text = serverIP
-    }
-
-    fun showModel(hrmModel: HRMModel) {
-        CPUName.text = hrmModel.cpu.name
-        GPUName.text = hrmModel.gpu.name
-
-        CPULoadGauge.value = hrmModel.cpu.load.toDouble()
-        GPULoadGauge.value = hrmModel.gpu.load.toDouble()
-
-        CPUMemoryGauge.maxValue = hrmModel.memory.total.toDouble()
-        CPUMemoryGauge.value = hrmModel.memory.used.toDouble()
-
-        GPUMemoryGauge.maxValue = 100.0
-        GPUMemoryGauge.value = hrmModel.gpu.usedMemory.toDouble()
-
-        CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
-        GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
-
-        CPUFanGauge.value = hrmModel.cpu.fan.toDouble()
-        GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
-    }
 
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
@@ -337,6 +304,40 @@ class MainView : View(TITLE) {
                 isVisible = false
             }
         }
+    }
+
+    fun visibilityConnectPane(value: Boolean) {
+        connectPane.isVisible = value
+        connectMessage.isVisible = false
+    }
+
+    fun showMessage(localizedMessage: String?) {
+        connectMessage.text = localizedMessage
+        connectMessage.isVisible = true
+    }
+
+    fun setIP(serverIP: String) {
+        textIP.text = serverIP
+    }
+
+    fun showModel(hrmModel: HRMModel) {
+        CPUName.text = hrmModel.cpu.name
+        GPUName.text = hrmModel.gpu.name
+
+        CPULoadGauge.value = hrmModel.cpu.load.toDouble()
+        GPULoadGauge.value = hrmModel.gpu.load.toDouble()
+
+        CPUMemoryGauge.maxValue = hrmModel.memory.total.toDouble()
+        CPUMemoryGauge.value = hrmModel.memory.used.toDouble()
+
+        GPUMemoryGauge.maxValue = 100.0
+        GPUMemoryGauge.value = hrmModel.gpu.usedMemory.toDouble()
+
+        CPUTempGauge.value = hrmModel.cpu.temperature.toDouble()
+        GPUTempGauge.value = hrmModel.gpu.temperature.toDouble()
+
+        CPUFanGauge.value = hrmModel.cpu.fan.toDouble()
+        GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 
     fun showWeather(weather: Weather) {

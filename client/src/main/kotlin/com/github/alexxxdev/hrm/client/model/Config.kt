@@ -9,6 +9,8 @@ data class Config(
     val fullscreen: Boolean = false,
     @SerialName("server_ip")
     val serverIP: String = "",
+    @SerialName("server_port")
+    val serverPort: Int = 0,
     @SerialName("delay_in_second")
     val delay: Long = 1000
 )

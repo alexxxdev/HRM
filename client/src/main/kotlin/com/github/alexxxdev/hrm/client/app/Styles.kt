@@ -8,15 +8,8 @@ import tornadofx.Stylesheet
 import tornadofx.cssclass
 import tornadofx.px
 
+@Suppress("MagicNumber")
 class Styles : Stylesheet() {
-    companion object {
-        val heading by cssclass()
-        val weather by cssclass()
-        val weather2 by cssclass()
-        val weather3 by cssclass()
-        val clock by cssclass()
-        val header by cssclass()
-    }
 
     init {
         root {
@@ -54,5 +47,14 @@ class Styles : Stylesheet() {
             // fontWeight = FontWeight.NORMAL
             textFill = Tile.BLUE
         }
+    }
+
+    companion object {
+        val heading by cssclass()
+        val weather by cssclass()
+        val weather2 by cssclass()
+        val weather3 by cssclass()
+        val clock by cssclass()
+        val header by cssclass()
     }
 }

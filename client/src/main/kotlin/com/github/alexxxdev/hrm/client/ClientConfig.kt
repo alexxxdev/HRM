@@ -6,12 +6,6 @@ import kotlinx.serialization.KSerializer
 
 class ClientConfig(name: String) : com.github.alexxxdev.hrm.core.Config<Config>(name) {
 
-    override var model: Config = Config()
-
-    override fun prefillConfig() = model
-
-    override fun serializer(): KSerializer<Config> = Config.serializer()
-
     val weather: WeatherConfig
         get() = model.weather
 
@@ -21,6 +15,15 @@ class ClientConfig(name: String) : com.github.alexxxdev.hrm.core.Config<Config>(
     val serverIP: String
         get() = model.serverIP
 
+    val serverPort: Int
+        get() = model.serverPort
+
     val delay: Long
         get() = model.delay
+
+    override var model: Config = Config()
+
+    override fun prefillConfig() = model
+
+    override fun serializer(): KSerializer<Config> = Config.serializer()
 }

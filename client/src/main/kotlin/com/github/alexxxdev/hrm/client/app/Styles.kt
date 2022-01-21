@@ -11,6 +11,9 @@ import tornadofx.px
 class Styles : Stylesheet() {
     companion object {
         val heading by cssclass()
+        val weather by cssclass()
+        val weather2 by cssclass()
+        val weather3 by cssclass()
         val clock by cssclass()
         val header by cssclass()
     }
@@ -32,6 +35,24 @@ class Styles : Stylesheet() {
             // backgroundColor += Tile.BLUE
             font = Fonts.robotoRegular(14.0)
             textFill = Clock.BRIGHT_COLOR
+        }
+        label and weather {
+            fontFamily = "Roboto"
+            fontSize = 20.px
+            // fontWeight = FontWeight.NORMAL
+            textFill = Tile.BLUE
+        }
+        label and weather2 {
+            fontFamily = "Roboto"
+            fontSize = 15.px
+            // fontWeight = FontWeight.NORMAL
+            textFill = Tile.BLUE
+        }
+        label and weather3 {
+            fontFamily = "Roboto"
+            fontSize = 12.px
+            // fontWeight = FontWeight.NORMAL
+            textFill = Tile.BLUE
         }
     }
 }

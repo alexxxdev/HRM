@@ -6,6 +6,7 @@ import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
+import io.ktor.util.KtorExperimentalAPI
 import io.ktor.util.cio.write
 import io.ktor.utils.io.readUTF8Line
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.awt.AWTException
 import java.awt.MenuItem
@@ -31,10 +33,11 @@ const val ICON = "icon.png"
 var hrmModel = HRMModel()
 val hrm = HRM()
 val json = Json
-val config = Config("config")
+val config = ServerConfig("config")
 var trayIcon: TrayIcon? = null
 var job: Job? = null
 
+@OptIn(KtorExperimentalAPI::class)
 fun main(args: Array<String>) {
     if (!config.readConfig()) return
 
@@ -111,19 +114,25 @@ fun main(args: Array<String>) {
                                         output.write("${json.encodeToString(HRMModel.serializer(), hrmModel)}\r\n")
                                     } else {
                                         output.write("fail\r\n")
-                                        socket.close()
+                                        withContext(Dispatchers.IO) {
+                                            socket.close()
+                                        }
                                         return@launch
                                     }
                                 }
                             }
                         } else {
-                            socket.close()
+                            withContext(Dispatchers.IO) {
+                                socket.close()
+                            }
                             return@launch
                         }
                     }
                 } catch (e: Throwable) {
                     e.printStackTrace()
-                    socket.close()
+                    withContext(Dispatchers.IO) {
+                        socket.close()
+                    }
                 }
             }
         }

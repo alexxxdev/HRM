@@ -1,8 +1,12 @@
 package com.github.alexxxdev.hrm.client.app
 
+import com.github.alexxxdev.hrm.client.ClientConfig
 import com.github.alexxxdev.hrm.client.ClientController
+import com.github.alexxxdev.hrm.client.YandexWeatherController
 import com.github.alexxxdev.hrm.client.view.MainView
+import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory
 import javafx.application.Platform
+import javafx.scene.Cursor
 import javafx.scene.image.Image
 import javafx.stage.Stage
 import javafx.stage.StageStyle
@@ -21,30 +25,43 @@ const val ICON = "icon.png"
 const val WIDTH = 800.0
 const val HEIGHT = 480.0
 
+val clientConfig = ClientConfig("config")
+
 class MyApp : App(MainView::class, Styles::class) {
     val controller: ClientController by inject()
+    val weatherController: YandexWeatherController by inject()
     var trayIcon: TrayIcon? = null
 
     init {
         DefaultErrorHandler.filter = { errorEvent ->
             controller.handleException(errorEvent)
         }
+        SvgImageLoaderFactory.install()
+
+        if (!clientConfig.readConfig()) Platform.exit()
     }
 
     override fun start(stage: Stage) {
-        controller.init()
+        controller.init(clientConfig)
+        weatherController.init(clientConfig.weather)
         Platform.setImplicitExit(false)
         with(stage) {
-            initStyle(StageStyle.TRANSPARENT)
-            isResizable = false
-            isFullScreen = true
-            // fullScreenExitHint="ds"
+            if (clientConfig.fullscreen) {
+                initStyle(StageStyle.TRANSPARENT)
+            }
+            isResizable = !clientConfig.fullscreen
+            isFullScreen = clientConfig.fullscreen
             minWidth = WIDTH
             minHeight = HEIGHT
             icons.add(Image("/$ICON"))
         }
 
         super.start(stage)
+
+        if (clientConfig.fullscreen) {
+            stage.scene?.cursor = Cursor.NONE
+        }
+
         if (SystemTray.isSupported()) {
             val tray = SystemTray.getSystemTray()
             val image: java.awt.Image = Toolkit.getDefaultToolkit().getImage(javaClass.classLoader.getResource(ICON))
@@ -55,11 +72,9 @@ class MyApp : App(MainView::class, Styles::class) {
             }
             val popup = PopupMenu()
             val defaultItem = MenuItem("Show")
-            defaultItem.addActionListener(
-                ActionListener {
-                    Platform.runLater { stage.show() }
-                }
-            )
+            defaultItem.addActionListener {
+                Platform.runLater { stage.show() }
+            }
             val defaultItem1 = MenuItem("Exit")
             defaultItem1.addActionListener(exitListener)
             popup.add(defaultItem)

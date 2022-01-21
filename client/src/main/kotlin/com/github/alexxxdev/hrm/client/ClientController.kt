@@ -9,8 +9,8 @@ import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
 import io.ktor.util.KtorExperimentalAPI
-import io.ktor.util.cio.write
 import io.ktor.utils.io.readUTF8Line
+import io.ktor.utils.io.writeFully
 import javafx.application.Platform
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -26,6 +26,7 @@ import java.net.SocketException
 import kotlin.coroutines.CoroutineContext
 
 class ClientController : Controller() {
+    private lateinit var clientConfig: ClientConfig
     val view: MainView by inject()
     val json = Json
     val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
@@ -37,8 +38,12 @@ class ClientController : Controller() {
     }
     val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob() + coroutineExceptionHandler
 
-    fun init() {
-        view.visibilityConnectPane(true)
+    fun init(clientConfig: ClientConfig) {
+        this.clientConfig = clientConfig
+        Platform.runLater {
+            view.visibilityConnectPane(true)
+            view.setIP(clientConfig.serverIP)
+        }
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
@@ -56,13 +61,13 @@ class ClientController : Controller() {
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)
 
-                output.write("version:${HRMModel().getVersion()}\r\n")
+                output.writeFully("version:${HRMModel().getVersion()}\r\n".toByteArray())
                 val response = input.readUTF8Line()
                 // println("Server said: '$response'")
                 if (response == "success") {
                     while (true) {
-                        delay(1000)
-                        output.write("get\r\n")
+                        delay(clientConfig.delay)
+                        output.writeFully("get\r\n".toByteArray())
                         val response2 = input.readUTF8Line()
                         // println("Server said: '$response2'")
                         if (response2 == "fail" || response2 == null) {

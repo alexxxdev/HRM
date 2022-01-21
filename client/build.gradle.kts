@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
     application
     id("org.openjfx.javafxplugin")
 }
@@ -22,10 +23,17 @@ dependencies {
     implementation("org.kordamp.ikonli:ikonli-weathericons-pack:11.5.0")
     implementation("org.kordamp.ikonli:ikonli-fontawesome-pack:11.5.0")
     implementation("io.ktor:ktor-network:1.4.0")
+    implementation("io.ktor:ktor-client-core:1.4.0")
+    implementation("io.ktor:ktor-client-java:1.5.0") // 1.6.7
+    implementation("io.ktor:ktor-client-serialization:1.4.0")
+    implementation("io.ktor:ktor-client-logging-jvm:1.4.0")
     /*implementation("com.dorkbox:SystemTray:3.17")
     implementation("net.java.dev.jna:jna:5.5.0")
     implementation("net.java.dev.jna:jna-platform:5.5.0")*/
     implementation("javax.xml.bind:jaxb-api:2.3.1")
+
+    implementation("org.slf4j:slf4j-simple:1.6.1")
+    implementation("de.codecentric.centerdevice:javafxsvg:1.3.0")
 }
 
 tasks {

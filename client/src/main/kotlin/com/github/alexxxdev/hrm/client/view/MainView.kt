@@ -7,6 +7,10 @@ import com.github.alexxxdev.hrm.client.app.HEIGHT
 import com.github.alexxxdev.hrm.client.app.Styles
 import com.github.alexxxdev.hrm.client.app.TITLE
 import com.github.alexxxdev.hrm.client.app.WIDTH
+import com.github.alexxxdev.hrm.client.condition
+import com.github.alexxxdev.hrm.client.iconUrl
+import com.github.alexxxdev.hrm.client.model.Weather
+import com.github.alexxxdev.hrm.client.windDir
 import com.github.alexxxdev.hrm.core.HRMModel
 import eu.hansolo.medusa.Clock
 import eu.hansolo.medusa.Gauge
@@ -15,8 +19,9 @@ import io.ktor.util.KtorExperimentalAPI
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.CacheHint
-import javafx.scene.Cursor
 import javafx.scene.control.Label
+import javafx.scene.control.TextField
+import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
 import javafx.scene.layout.CornerRadii
@@ -27,6 +32,9 @@ import tornadofx.action
 import tornadofx.addClass
 import tornadofx.attachTo
 import tornadofx.button
+import tornadofx.clear
+import tornadofx.hbox
+import tornadofx.imageview
 import tornadofx.label
 import tornadofx.paddingAll
 import tornadofx.paddingLeft
@@ -52,6 +60,9 @@ class MainView : View(TITLE) {
     lateinit var GPUTempGauge: Gauge
     lateinit var CPUFanGauge: Gauge
     lateinit var GPUFanGauge: Gauge
+    lateinit var weatherBox: Pane
+    lateinit var weatherDescBox: Pane
+    lateinit var textIP: TextField
 
     fun visibilityConnectPane(value: Boolean) {
         connectPane.isVisible = value
@@ -61,6 +72,10 @@ class MainView : View(TITLE) {
     fun showMessage(localizedMessage: String?) {
         connectMessage.text = localizedMessage
         connectMessage.isVisible = true
+    }
+
+    fun setIP(serverIP: String) {
+        textIP.text = serverIP
     }
 
     fun showModel(hrmModel: HRMModel) {
@@ -83,11 +98,25 @@ class MainView : View(TITLE) {
         GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 
-    @KtorExperimentalAPI
+    @OptIn(KtorExperimentalAPI::class)
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
 
-        cursor = Cursor.NONE
+        weatherBox = vbox {
+            prefWidth = tileSize * 2
+            layoutX = WIDTH / 2 - prefWidth / 2
+            layoutY = HEIGHT / 2 - prefHeight / 2 - tileSize / 2 - 60
+            alignment = Pos.CENTER
+            // background = Background(BackgroundFill(Color.rgb(77, 77, 77), CornerRadii(4.0), Insets.EMPTY))
+        }
+
+        weatherDescBox = vbox {
+            prefWidth = tileSize * 2
+            prefHeight = 50.0
+            layoutX = WIDTH / 2 - prefWidth / 2
+            layoutY = HEIGHT / 2 + prefHeight + 44
+            alignment = Pos.CENTER
+        }
 
         button("Hide") {
             setPrefSize(100.0, 30.0)
@@ -301,14 +330,62 @@ class MainView : View(TITLE) {
                 addClass(Styles.heading)
                 prefWidth(tileSize)
             }
-            val ip = textfield("192.168.0.11")
+            textIP = textfield()
             button("Connect") {
-                action { controller.connect(ip.text) }
+                action { controller.connect(textIP.text) }
             }
             connectMessage = label {
                 addClass(Styles.heading)
                 isVisible = false
             }
         }
+    }
+
+    fun showWeather(weather: Weather) {
+        weatherBox.clear()
+        weatherDescBox.clear()
+
+        weatherBox.add(
+            hbox {
+                prefWidth = tileSize * 2
+                alignment = Pos.CENTER
+                label("${weather.fact.temp}℃ ") {
+                    addClass(Styles.weather)
+                }
+                imageview {
+                    fitHeight = 24.0
+                    fitWidth = 24.0
+                    image = Image(weather.iconUrl, true)
+                }
+            }
+
+        )
+        weatherBox.add(
+            label("Ощущается как ${weather.fact.feels_like}℃ ") {
+                addClass(Styles.weather2)
+            }
+        )
+
+        weatherDescBox.add(
+            hbox {
+                alignment = Pos.CENTER
+                label("\uD83C\uDF22 ${weather.fact.humidity}%   \uD83C\uDF00 ${weather.fact.pressure_mm}") {
+                    addClass(Styles.weather2)
+                }
+                label(" мм рт. ст.") {
+                    addClass(Styles.weather3)
+                }
+            }
+        )
+        weatherDescBox.add(
+            label("\uD83D\uDCA8 ${weather.fact.wind_speed} ${weather.windDir}") {
+                addClass(Styles.weather2)
+            }
+        )
+        weatherDescBox.add(
+            label(weather.condition) {
+                addClass(Styles.weather2)
+            }
+        )
     }
 }

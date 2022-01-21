@@ -32,7 +32,7 @@ import kotlin.time.toDuration
 
 class YandexWeatherController : Controller() {
     val view: MainView by inject()
-    val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         println("WeatherController.CoroutineExceptionHandler: " + throwable.message)
     }
     val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob() + coroutineExceptionHandler

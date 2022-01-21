@@ -29,7 +29,7 @@ class ClientController : Controller() {
     private lateinit var clientConfig: ClientConfig
     val view: MainView by inject()
     val json = Json
-    val coroutineExceptionHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+    val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
         println("CoroutineExceptionHandler: " + throwable.localizedMessage)
         Platform.runLater {
             view.visibilityConnectPane(true)

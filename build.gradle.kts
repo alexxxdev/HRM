@@ -8,8 +8,8 @@ buildscript {
         maven(url = "https://plugins.gradle.org/m2/")
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.4.0"))
-        classpath(kotlin("serialization", version = "1.4.0"))
+        classpath(kotlin("gradle-plugin", version = "1.6.10"))
+        classpath(kotlin("serialization", version = "1.6.10"))
         classpath("org.openjfx:javafx-plugin:0.0.9")
         classpath("com.github.ben-manes:gradle-versions-plugin:0.29.0")
     }

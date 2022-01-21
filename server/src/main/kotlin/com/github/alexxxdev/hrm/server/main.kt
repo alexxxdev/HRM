@@ -38,7 +38,7 @@ var trayIcon: TrayIcon? = null
 var job: Job? = null
 
 @OptIn(KtorExperimentalAPI::class)
-fun main(args: Array<String>) {
+fun main() {
     if (!config.readConfig()) return
 
     if (!getData(config.params)) return

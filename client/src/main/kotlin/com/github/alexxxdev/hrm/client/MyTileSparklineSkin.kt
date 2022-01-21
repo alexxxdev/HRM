@@ -492,8 +492,8 @@ class MyTileSparklineSkin(gauge: Gauge) : GaugeSkinBase(gauge) {
         locale = gauge.locale
         noOfDatapoints = gauge.averagingPeriod
         dataList = LinkedList()
-        currentValueListener = InvalidationListener { o: Observable? -> handleEvents("CURRENT_VALUE") }
-        averagingListener = InvalidationListener { o: Observable? -> handleEvents("AVERAGING_PERIOD") }
+        currentValueListener = InvalidationListener { _: Observable? -> handleEvents("CURRENT_VALUE") }
+        averagingListener = InvalidationListener { _: Observable? -> handleEvents("AVERAGING_PERIOD") }
         for (i in 0 until noOfDatapoints) {
             dataList.add(minValue)
         }

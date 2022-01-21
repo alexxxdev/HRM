@@ -37,6 +37,7 @@ val config = ServerConfig("config")
 var trayIcon: TrayIcon? = null
 var job: Job? = null
 
+
 @OptIn(KtorExperimentalAPI::class)
 fun main() {
     if (!config.readConfig()) return

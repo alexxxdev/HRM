@@ -8,7 +8,6 @@ import io.ktor.network.sockets.Socket
 import io.ktor.network.sockets.aSocket
 import io.ktor.network.sockets.openReadChannel
 import io.ktor.network.sockets.openWriteChannel
-import io.ktor.util.KtorExperimentalAPI
 import io.ktor.utils.io.readUTF8Line
 import io.ktor.utils.io.writeFully
 import javafx.application.Platform
@@ -47,7 +46,6 @@ class ClientController : Controller() {
     }
 
     @Suppress("BlockingMethodInNonBlockingContext")
-    @KtorExperimentalAPI
     fun connect(text: String?) {
         text?.let {
             val ip = it

@@ -15,7 +15,6 @@ import com.github.alexxxdev.hrm.core.HRMModel
 import eu.hansolo.medusa.Clock
 import eu.hansolo.medusa.Gauge
 import eu.hansolo.medusa.Section
-import io.ktor.util.KtorExperimentalAPI
 import javafx.geometry.Insets
 import javafx.geometry.Pos
 import javafx.scene.CacheHint
@@ -98,7 +97,6 @@ class MainView : View(TITLE) {
         GPUFanGauge.value = hrmModel.gpu.fan.toDouble()
     }
 
-    @OptIn(KtorExperimentalAPI::class)
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
 

@@ -62,7 +62,7 @@ class YandexWeatherController : Controller() {
                             url {
                                 protocol = URLProtocol.HTTPS
                                 host = "api.weather.yandex.ru"
-                                path("v2", "forecast")
+                                path("v2", "informers")
                                 parameters.append("lat", weatherConfig.lat.toString())
                                 parameters.append("lon", weatherConfig.lon.toString())
                                 parameters.append("lang", weatherConfig.lang)

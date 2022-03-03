@@ -39,44 +39,47 @@ class YandexWeatherController : Controller() {
 
     @OptIn(ExperimentalTime::class)
     fun init(weatherConfig: WeatherConfig) {
-        CoroutineScope(coroutineContext).launch {
-            tickerFlow(1.toDuration(DurationUnit.HOURS))
-                .map { LocalDateTime.now() }
-                .onEach {
-                    // println("WeatherController: " + it.toString())
-                    HttpClient(Java) {
-                        install(JsonFeature) {
-                            serializer = KotlinxSerializer(
-                                Json {
-                                    ignoreUnknownKeys = true
-                                }
-                            )
-                            expectSuccess = true
-                        }
-                        /*install(Logging) {
+        if (weatherConfig.token.isNotEmpty()) {
+            CoroutineScope(coroutineContext).launch {
+                tickerFlow(1.toDuration(DurationUnit.HOURS))
+                    .map { LocalDateTime.now() }
+                    .onEach {
+                        // println("WeatherController: " + it.toString())
+                        HttpClient(Java) {
+                            install(JsonFeature) {
+                                serializer = KotlinxSerializer(
+                                    Json {
+                                        ignoreUnknownKeys = true
+                                    }
+                                )
+                                expectSuccess = true
+                            }
+                            /*install(Logging) {
                             logger = Logger.DEFAULT
                             level = LogLevel.ALL
                         }*/
-                    }.use { httpClient ->
-                        val weather: Weather = httpClient.request<Weather> {
-                            url {
-                                protocol = URLProtocol.HTTPS
-                                host = "api.weather.yandex.ru"
-                                path("v2", "informers")
-                                parameters.append("lat", weatherConfig.lat.toString())
-                                parameters.append("lon", weatherConfig.lon.toString())
-                                parameters.append("lang", weatherConfig.lang)
-                                headers.append("X-Yandex-API-Key", weatherConfig.token)
+                        }.use { httpClient ->
+                            val weather: Weather = httpClient.request<Weather> {
+                                url {
+                                    protocol = URLProtocol.HTTPS
+                                    host = "api.weather.yandex.ru"
+                                    path("v2", "informers")
+                                    parameters.append("lat", weatherConfig.lat.toString())
+                                    parameters.append("lon", weatherConfig.lon.toString())
+                                    parameters.append("lang", weatherConfig.lang)
+                                    headers.append("X-Yandex-API-Key", weatherConfig.token)
+                                }
+                                method = HttpMethod.Get
                             }
-                            method = HttpMethod.Get
-                        }
-                        Platform.runLater {
-                            view.showWeather(weather)
+                            Platform.runLater {
+                                view.showWeather(weather)
+                            }
                         }
                     }
-                }
-                .launchIn(this)
+                    .launchIn(this)
+            }
         }
+
     }
 
     @OptIn(ExperimentalTime::class)

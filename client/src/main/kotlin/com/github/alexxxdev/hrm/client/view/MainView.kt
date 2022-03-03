@@ -86,7 +86,6 @@ class MainView : View(TITLE) {
             layoutX = WIDTH / 2 - prefWidth / 2
             layoutY = HEIGHT / 2 - prefHeight / 2 - tileSize / 2 - 60
             alignment = Pos.CENTER
-            // background = Background(BackgroundFill(Color.rgb(77, 77, 77), CornerRadii(4.0), Insets.EMPTY))
         }
 
         weatherDescBox = vbox {

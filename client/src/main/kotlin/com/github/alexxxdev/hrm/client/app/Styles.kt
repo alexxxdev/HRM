@@ -13,7 +13,7 @@ class Styles : Stylesheet() {
 
     init {
         root {
-            backgroundColor += Tile.BACKGROUND
+            // backgroundColor += Tile.BACKGROUND
         }
         s(clock) {
             // backgroundColor += Tile.BLUE
@@ -26,7 +26,7 @@ class Styles : Stylesheet() {
         }
         label and header {
             // backgroundColor += Tile.BLUE
-            font = Fonts.robotoRegular(14.0)
+            font = Fonts.robotoRegular(13.0)
             textFill = Clock.BRIGHT_COLOR
         }
         label and weather {

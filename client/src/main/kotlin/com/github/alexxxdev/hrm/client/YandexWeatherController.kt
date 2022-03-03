@@ -79,7 +79,6 @@ class YandexWeatherController : Controller() {
                     .launchIn(this)
             }
         }
-
     }
 
     @OptIn(ExperimentalTime::class)

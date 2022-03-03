@@ -23,6 +23,10 @@ import javafx.scene.control.TextField
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.BackgroundFill
+import javafx.scene.layout.BackgroundImage
+import javafx.scene.layout.BackgroundPosition
+import javafx.scene.layout.BackgroundRepeat
+import javafx.scene.layout.BackgroundSize
 import javafx.scene.layout.CornerRadii
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
@@ -67,6 +71,16 @@ class MainView : View(TITLE) {
     override val root = pane {
         setPrefSize(WIDTH, HEIGHT)
 
+        background = Background(
+            BackgroundImage(
+                Image("/background.png", 480.0, 320.0, false, true),
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER,
+                BackgroundSize(WIDTH, HEIGHT, false, false, false, false)
+            )
+        )
+
         weatherBox = vbox {
             prefWidth = tileSize * 2
             layoutX = WIDTH / 2 - prefWidth / 2
@@ -79,13 +93,13 @@ class MainView : View(TITLE) {
             prefWidth = tileSize * 2
             prefHeight = 50.0
             layoutX = WIDTH / 2 - prefWidth / 2
-            layoutY = HEIGHT / 2 + prefHeight + 44
+            layoutY = HEIGHT - 78
             alignment = Pos.CENTER
         }
 
         button("Hide") {
             setPrefSize(100.0, 30.0)
-            background = Background(BackgroundFill(Color.rgb(43, 43, 43), CornerRadii(4.0), Insets.EMPTY))
+            background = Background(BackgroundFill(Color.TRANSPARENT, CornerRadii(4.0), Insets.EMPTY))
             textFill = Color.rgb(58, 58, 58)
             layoutX = WIDTH / 2 - 50
             layoutY = HEIGHT - 34
@@ -97,6 +111,8 @@ class MainView : View(TITLE) {
         CPUName = label() {
             paddingAll = 10.0
             prefWidth = WIDTH / 2
+            layoutY = 16.0
+            layoutX = 10.0
             alignment = Pos.CENTER_LEFT
             addClass(Styles.header)
         }
@@ -104,16 +120,18 @@ class MainView : View(TITLE) {
         GPUName = label() {
             paddingAll = 10.0
             prefWidth = WIDTH / 2
-            layoutX = WIDTH - WIDTH / 2
+            layoutY = 16.0
+            layoutX = WIDTH - WIDTH / 2 - 10
             alignment = Pos.CENTER_RIGHT
             addClass(Styles.header)
         }
 
         CPULoadGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize * 1.6, tileSize)
+            setPrefSize(tileSize * 1.5, tileSize)
             skinType = Gauge.SkinType.TILE_SPARK_LINE
             averagingPeriod = 30
             layoutY = 10.0
+            layoutX = 10.0
             minValue = 0.0
             maxValue = 100.0
             unit = "%"
@@ -129,9 +147,9 @@ class MainView : View(TITLE) {
         }
 
         CPUMemoryGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize, tileSize)
+            setPrefSize(tileSize * 0.9, tileSize * 0.9)
             skinType = Gauge.SkinType.SIMPLE_SECTION
-            layoutY = 10.0 + tileSize * 2
+            layoutY = 6.0 + tileSize * 2
             title = "Memory"
             unit = "Gb"
             isAutoScale = false
@@ -147,7 +165,8 @@ class MainView : View(TITLE) {
         CPUTempGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
             skinType = Gauge.SkinType.SIMPLE_SECTION
-            layoutY = 10.0 + tileSize
+            layoutY = tileSize
+            layoutX = 17.0
             title = "Temp"
             unit = "°C"
             isAutoScale = false
@@ -171,7 +190,7 @@ class MainView : View(TITLE) {
         CPUFanGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize * 0.8, tileSize * 0.8)
             skinType = Gauge.SkinType.SIMPLE_SECTION // BAR
-            layoutY = tileSize * 2 - 50
+            layoutY = tileSize * 2 - 40
             layoutX = tileSize - 30
             title = "Fan"
             unit = "%"
@@ -188,12 +207,12 @@ class MainView : View(TITLE) {
         }
 
         GPULoadGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize * 1.6, tileSize)
+            setPrefSize(tileSize * 1.5, tileSize)
             skinType = Gauge.SkinType.TILE_SPARK_LINE
             averagingPeriod = 25
             angleRange = 170.0
             layoutY = 10.0
-            layoutX = WIDTH - tileSize * 1.6
+            layoutX = WIDTH - tileSize * 1.5 - 10
             maxValue = 100.0
             unit = "%"
             isAutoScale = false
@@ -207,10 +226,10 @@ class MainView : View(TITLE) {
         }
 
         GPUMemoryGauge = Gauge().attachTo(this) {
-            setPrefSize(tileSize, tileSize)
+            setPrefSize(tileSize * 0.9, tileSize * 0.9)
             skinType = Gauge.SkinType.SIMPLE_SECTION
-            layoutY = 10.0 + tileSize * 2
-            layoutX = WIDTH - tileSize
+            layoutY = 6.0 + tileSize * 2
+            layoutX = WIDTH - tileSize * 0.9
             title = "Memory"
             unit = "%"
             isAutoScale = false
@@ -226,8 +245,8 @@ class MainView : View(TITLE) {
         GPUTempGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize, tileSize)
             skinType = Gauge.SkinType.SIMPLE_SECTION
-            layoutY = 10.0 + tileSize
-            layoutX = WIDTH - tileSize
+            layoutY = tileSize
+            layoutX = WIDTH - tileSize - 17
             title = "Temp"
             unit = "°C"
             isAutoScale = false
@@ -249,7 +268,7 @@ class MainView : View(TITLE) {
         GPUFanGauge = Gauge().attachTo(this) {
             setPrefSize(tileSize * 0.8, tileSize * 0.8)
             skinType = Gauge.SkinType.SIMPLE_SECTION // BAR
-            layoutY = tileSize * 2 - 50
+            layoutY = tileSize * 2 - 40
             layoutX = WIDTH - tileSize * 2 + 52
             title = "Fan"
             unit = "%"
@@ -377,12 +396,7 @@ class MainView : View(TITLE) {
             }
         )
         weatherDescBox.add(
-            label("\uD83D\uDCA8 ${weather.fact.wind_speed} ${weather.windDir}") {
-                addClass(Styles.weather2)
-            }
-        )
-        weatherDescBox.add(
-            label(weather.condition) {
+            label("${weather.condition}      \uD83D\uDCA8 ${weather.fact.wind_speed} ${weather.windDir}") {
                 addClass(Styles.weather2)
             }
         )

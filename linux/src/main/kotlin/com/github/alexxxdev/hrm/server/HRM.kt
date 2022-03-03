@@ -5,6 +5,7 @@ import com.github.alexxxdev.hrm.core.GPU
 import com.github.alexxxdev.hrm.core.HRMModel
 import com.github.alexxxdev.hrm.core.IHRM
 import com.github.alexxxdev.hrm.core.IO
+import com.github.alexxxdev.hrm.core.Log
 import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
 
@@ -20,9 +21,9 @@ class HRM : IHRM {
             )
         )
         val cpuModel = getCPUModel()
-        println(cpuModel)
+        Log.d(cpuModel)
         val gpuModel = getGPUModel()
-        println(gpuModel)
+        Log.d(gpuModel)
         hrmModel = hrmModel.copy(cpu = CPU(name = cpuModel), gpu = GPU(name = gpuModel))
     }
 

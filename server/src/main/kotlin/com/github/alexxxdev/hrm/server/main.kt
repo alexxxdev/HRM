@@ -1,6 +1,7 @@
 package com.github.alexxxdev.hrm.server
 
 import com.github.alexxxdev.hrm.core.HRMModel
+import com.github.alexxxdev.hrm.core.Log
 import com.github.alexxxdev.hrm.core.getVersion
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.aSocket
@@ -43,10 +44,12 @@ fun main() {
 
     if (!getData(config.params)) return
 
-    val version = hrmModel.getVersion()
-    println(version)
+    Log.debug = config.debug
 
-    println(json.encodeToString(HRMModel.serializer(), hrmModel))
+    val version = hrmModel.getVersion()
+    Log.d(version)
+
+    Log.d(json.encodeToString(HRMModel.serializer(), hrmModel))
 
     job = createJob()
 
@@ -59,14 +62,14 @@ fun main() {
 private fun runServer(version: String) {
     runBlocking {
         val server = aSocket(ActorSelectorManager(Dispatchers.IO)).tcp().bind(InetSocketAddress(config.ip, config.port))
-        println("Started server ...")
+        Log.d("Started server ...")
         delay(1000)
-        println("Ready: ${server.localAddress}")
+        Log.d("Ready: ${server.localAddress}")
         while (true) {
             val socket = server.accept()
             var versionCompatibility = false
             launch {
-                println("Socket accepted: ${socket.remoteAddress}")
+                Log.d("Socket accepted: ${socket.remoteAddress}")
 
                 val input = socket.openReadChannel()
                 val output = socket.openWriteChannel(autoFlush = true)
@@ -74,7 +77,7 @@ private fun runServer(version: String) {
                 try {
                     while (true) {
                         val line = input.readUTF8Line()
-                        println("${socket.remoteAddress}: $line")
+                        Log.d("${socket.remoteAddress}: $line")
                         if (line != null) {
                             when {
                                 line.startsWith("version:") -> {
@@ -122,7 +125,7 @@ private fun addSystemTray() {
         val image: Image =
             Toolkit.getDefaultToolkit().getImage(Toolkit::javaClass.javaClass.classLoader.getResource(ICON))
         val exitListener = ActionListener {
-            println("Exiting...")
+            Log.d("Exiting...")
             tray.remove(trayIcon)
             exitProcess(0)
         }
@@ -152,7 +155,7 @@ private fun createJob(): Job {
     return CoroutineScope(Dispatchers.Default).launch {
         while (true) {
             if (!getData(config.params)) return@launch
-            println(json.encodeToString(HRMModel.serializer(), hrmModel))
+            Log.d(json.encodeToString(HRMModel.serializer(), hrmModel))
             delay(config.refreshDataInterval)
         }
     }

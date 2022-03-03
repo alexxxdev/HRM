@@ -4,6 +4,7 @@ import com.github.alexxxdev.hrm.client.ClientConfig
 import com.github.alexxxdev.hrm.client.ClientController
 import com.github.alexxxdev.hrm.client.YandexWeatherController
 import com.github.alexxxdev.hrm.client.view.MainView
+import com.github.alexxxdev.hrm.core.Log
 import de.codecentric.centerdevice.javafxsvg.SvgImageLoaderFactory
 import javafx.application.Platform
 import javafx.scene.Cursor
@@ -39,6 +40,7 @@ class MyApp : App(MainView::class, Styles::class) {
         SvgImageLoaderFactory.install()
 
         if (!clientConfig.readConfig()) Platform.exit()
+        Log.debug = clientConfig.debug
     }
 
     override fun start(stage: Stage) {
@@ -66,7 +68,7 @@ class MyApp : App(MainView::class, Styles::class) {
             val tray = SystemTray.getSystemTray()
             val image: java.awt.Image = Toolkit.getDefaultToolkit().getImage(javaClass.classLoader.getResource(ICON))
             val exitListener = ActionListener {
-                println("Exiting...")
+                Log.d("Exiting...")
                 tray.remove(trayIcon)
                 Platform.exit()
             }

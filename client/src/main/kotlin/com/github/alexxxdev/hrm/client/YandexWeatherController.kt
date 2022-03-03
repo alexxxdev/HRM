@@ -3,10 +3,15 @@ package com.github.alexxxdev.hrm.client
 import com.github.alexxxdev.hrm.client.model.Weather
 import com.github.alexxxdev.hrm.client.model.WeatherConfig
 import com.github.alexxxdev.hrm.client.view.MainView
+import com.github.alexxxdev.hrm.core.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.java.Java
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
+import io.ktor.client.features.logging.DEFAULT
+import io.ktor.client.features.logging.LogLevel
+import io.ktor.client.features.logging.Logger
+import io.ktor.client.features.logging.Logging
 import io.ktor.client.request.request
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLProtocol
@@ -32,8 +37,9 @@ import kotlin.time.toDuration
 
 class YandexWeatherController : Controller() {
     val view: MainView by inject()
+
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        println("WeatherController.CoroutineExceptionHandler: " + throwable.message)
+        Log.d("WeatherController.CoroutineExceptionHandler: " + throwable.message)
     }
     val coroutineContext: CoroutineContext = Dispatchers.Default + SupervisorJob() + coroutineExceptionHandler
 
@@ -44,7 +50,7 @@ class YandexWeatherController : Controller() {
                 tickerFlow(1.toDuration(DurationUnit.HOURS))
                     .map { LocalDateTime.now() }
                     .onEach {
-                        // println("WeatherController: " + it.toString())
+                        Log.d("WeatherController: $it")
                         HttpClient(Java) {
                             install(JsonFeature) {
                                 serializer = KotlinxSerializer(
@@ -54,10 +60,12 @@ class YandexWeatherController : Controller() {
                                 )
                                 expectSuccess = true
                             }
-                            /*install(Logging) {
-                            logger = Logger.DEFAULT
-                            level = LogLevel.ALL
-                        }*/
+                            if (Log.debug) {
+                                install(Logging) {
+                                    logger = Logger.DEFAULT
+                                    level = LogLevel.ALL
+                                }
+                            }
                         }.use { httpClient ->
                             val weather: Weather = httpClient.request<Weather> {
                                 url {

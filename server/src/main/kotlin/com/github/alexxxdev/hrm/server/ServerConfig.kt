@@ -1,6 +1,7 @@
 package com.github.alexxxdev.hrm.server
 
 import com.github.alexxxdev.hrm.core.Config
+import com.github.alexxxdev.hrm.core.Log
 import java.net.NetworkInterface
 
 class ServerConfig(name: String) : Config<ConfigModel>(name) {
@@ -15,6 +16,8 @@ class ServerConfig(name: String) : Config<ConfigModel>(name) {
         get() = model.refreshDataInterval
     val params: Map<String, String>
         get() = model.params
+    val debug: Boolean
+        get() = model.debug
 
     override fun prefillConfig() = model.copy(
         ip = "Maybe: ${getIps()}",
@@ -42,7 +45,7 @@ class ServerConfig(name: String) : Config<ConfigModel>(name) {
             .flatMap {
                 it.filter { it.address.isSiteLocalAddress }
                     .map {
-                        println(it.address.hostAddress)
+                        Log.d(it.address.hostAddress)
                         it.address.hostAddress
                     }
             }

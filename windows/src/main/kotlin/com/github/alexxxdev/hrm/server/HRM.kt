@@ -5,6 +5,7 @@ import com.github.alexxxdev.hrm.core.GPU
 import com.github.alexxxdev.hrm.core.HRMModel
 import com.github.alexxxdev.hrm.core.IHRM
 import com.github.alexxxdev.hrm.core.IO
+import com.github.alexxxdev.hrm.core.Log
 import com.github.alexxxdev.hrm.core.OS
 import com.github.alexxxdev.hrm.core.OSType
 import kotlin.math.roundToInt
@@ -45,8 +46,8 @@ class HRM : IHRM {
     override fun getData(params: Map<String, String>): List<Result<HRMModel>> {
         val list = getValuesFromWMI()
         return if (list.isEmpty()) {
-            println("Open Hardware Monitor not Running!")
-            println("Please run Open Hardware Monitor with Admin Rights")
+            Log.d("Open Hardware Monitor not Running!")
+            Log.d("Please run Open Hardware Monitor with Admin Rights")
             listOf(Result.failure(java.lang.Exception()))
         } else {
             var CPUload = 0f

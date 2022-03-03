@@ -21,6 +21,9 @@ class ClientConfig(name: String) : com.github.alexxxdev.hrm.core.Config<Config>(
     val delay: Long
         get() = model.delay
 
+    val debug: Boolean
+        get() = model.debug
+
     override var model: Config = Config()
 
     override fun prefillConfig() = model

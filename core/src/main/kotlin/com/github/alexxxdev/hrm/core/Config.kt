@@ -9,7 +9,7 @@ val jsonConfig = Json {
     ignoreUnknownKeys = true
 }
 
-abstract class Config<T>(name: String) {
+abstract class Config<T : Any>(name: String) {
 
     private var isEmpty = true
     private var isCorrect = false
@@ -25,10 +25,10 @@ abstract class Config<T>(name: String) {
             read()
             if (isEmpty) {
                 prefillConfigSave()
-                println("Need to fill out the config $absolutePath")
+                Log.d("Need to fill out the config $absolutePath")
                 false
             } else if (!isCorrect) {
-                println("Need to fill out the config $absolutePath")
+                Log.d("Need to fill out the config $absolutePath")
                 false
             } else {
                 true
@@ -36,9 +36,9 @@ abstract class Config<T>(name: String) {
         } else {
             if (createNewFile()) {
                 prefillConfigSave()
-                println("Need to fill out the config $absolutePath")
+                Log.d("Need to fill out the config $absolutePath")
             } else {
-                println("It is necessary to create and fill in the config $absolutePath")
+                Log.d("It is necessary to create and fill in the config $absolutePath")
             }
             false
         }
@@ -53,11 +53,11 @@ abstract class Config<T>(name: String) {
         try {
             val raw = configFile.readText()
             model = jsonConfig.decodeFromString(serializer(), raw)
-            println(model)
+            Log.d(model)
             isEmpty = false
             isCorrect = check()
         } catch (e: Exception) {
-            println(e)
+            Log.d(e)
             isEmpty = true
         }
     }
@@ -68,7 +68,6 @@ abstract class Config<T>(name: String) {
 
     @Suppress("FunctionOnlyReturningConstant")
     private fun check(): Boolean {
-        // TODO
         return true
     }
 }

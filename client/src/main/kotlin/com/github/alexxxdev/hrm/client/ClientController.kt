@@ -2,6 +2,7 @@ package com.github.alexxxdev.hrm.client
 
 import com.github.alexxxdev.hrm.client.view.MainView
 import com.github.alexxxdev.hrm.core.HRMModel
+import com.github.alexxxdev.hrm.core.Log
 import com.github.alexxxdev.hrm.core.getVersion
 import io.ktor.network.selector.ActorSelectorManager
 import io.ktor.network.sockets.Socket
@@ -29,7 +30,7 @@ class ClientController : Controller() {
     val view: MainView by inject()
     val json = Json
     val coroutineExceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        println("CoroutineExceptionHandler: " + throwable.localizedMessage)
+        Log.d("CoroutineExceptionHandler: " + throwable.localizedMessage)
         Platform.runLater {
             view.visibilityConnectPane(true)
             view.showMessage(throwable.localizedMessage)
@@ -49,7 +50,7 @@ class ClientController : Controller() {
     fun connect(text: String?) {
         text?.let {
             val ip = it
-            println(text)
+            Log.d(text)
             view.visibilityConnectPane(false)
 
             CoroutineScope(coroutineContext).launch {
@@ -62,13 +63,13 @@ class ClientController : Controller() {
 
                 output.writeFully("version:${HRMModel().getVersion()}\r\n".toByteArray())
                 val response = input.readUTF8Line()
-                // println("Server said: '$response'")
+                Log.d("Server said: '$response'")
                 if (response == "success") {
                     while (true) {
                         delay(clientConfig.delay)
                         output.writeFully("get\r\n".toByteArray())
                         val response2 = input.readUTF8Line()
-                        // println("Server said: '$response2'")
+                        Log.d("Server said: '$response2'")
                         if (response2 == "fail" || response2 == null) {
                             socket.close()
                             return@launch
@@ -84,8 +85,8 @@ class ClientController : Controller() {
     }
 
     fun handleException(throwable: DefaultErrorHandler.ErrorEvent) {
-        println("ErrorEvent.error: " + throwable.error)
-        println("ErrorEvent.thread: " + throwable.thread)
+        Log.d("ErrorEvent.error: " + throwable.error)
+        Log.d("ErrorEvent.thread: " + throwable.thread)
         when (throwable.error) {
             is SocketException -> {
                 throwable.consume()

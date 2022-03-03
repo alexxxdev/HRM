@@ -12,7 +12,8 @@ data class Config(
     @SerialName("server_port")
     val serverPort: Int = 0,
     @SerialName("delay_in_second")
-    val delay: Long = 1000
+    val delay: Long = 1000,
+    val debug: Boolean = false
 )
 
 @Serializable

@@ -12,5 +12,6 @@
         "gpu.memory": "GPU Memory",
         "memory.total": "Memory",
         "memory.used": "Used Memory"
-    }
+    },
+    "debug" : false
 }
